@@ -56,13 +56,13 @@ def log(line: str) -> None:
         f.write(f"{datetime.now():%F %T} {line}\n")
 
 
-def info(m): print(_c(m, "47;30m").rstrip()); log(f"INFO  {m}")
-def warn(m): print(_c(m, "43;30m").rstrip()); log(f"WARN  {m}")
-def danger(m): print(_c(m, "41;97m").rstrip()); log(f"ERROR {m}")
+def info(m): print(_c(m, "47;30").rstrip()); log(f"INFO  {m}")
+def warn(m): print(_c(m, "43;30").rstrip()); log(f"WARN  {m}")
+def danger(m): print(_c(m, "41;97").rstrip()); log(f"ERROR {m}")
 
 
 def progress(cur: str, nxt: str, n: int) -> None:
-    print(_c(f"CURRENT={cur} | NEXT={nxt} | PROGRESS={n}/{TOTAL}", "46;30m").rstrip())
+    print(_c(f"CURRENT={cur} | NEXT={nxt} | PROGRESS={n}/{TOTAL}", "46;30").rstrip())
     log(f"STEP [{n}/{TOTAL}] {cur} -> {nxt}")
 
 
@@ -150,7 +150,10 @@ def write_results(status: str, evidence: str, rollback: str, next_purpose: str) 
 
 
 def rollback(reason: str) -> None:
-    warn(f"실패 감지({reason}) — 복구: 띄운 서버 정리 (기존 파일·데이터 보존, 재실행 안전)")
+    if reason in ("selftest-cleanup", "user-ctrl-c"):
+        info("서버 정리 완료 (기존 파일·데이터 보존, 재실행 안전)")
+    else:
+        warn(f"실패 감지({reason}) — 복구: 띄운 서버 정리 (기존 파일·데이터 보존, 재실행 안전)")
     if _server and _server.poll() is None:
         _server.terminate()
         try:
