@@ -35,18 +35,26 @@
 > 이미 설치돼 있으면 그 단계는 **건너뛰고(pass)** 바로 다음으로 갑니다.
 
 <details>
-<summary>명령창을 쓰는 게 편하다면 (선택) — PowerShell·cmd 둘 다 됨</summary>
+<summary>명령창을 쓰는 게 편하다면 (선택) — 창에 맞는 한 줄</summary>
 
-아래 **두 줄**을 **한 줄씩** 붙여넣고 Enter 하세요. **PowerShell·명령 프롬프트(cmd) 어느 창이든 똑같이** 됩니다.
-(⚠️ 두 줄을 한꺼번에 붙이지 말 것)
+> 맨 앞 `#`(PowerShell) / `REM`(cmd) 줄은 **설명(주석)** 이라 같이 붙여넣어도 에러가 안 납니다.
+> 빨간 글씨가 떠도 컴퓨터는 절대 안 부서지니 안심하세요.
 
-```text
-대상(실행 위치): 🟦 Windows — PowerShell 또는 cmd 공용. 한 줄씩 Enter.
-curl.exe -L -o install.bat https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/youtube-subtitle-converter/install.bat
-.\install.bat
+**파란 창(PowerShell, `PS C:\>`) 이면 — 아래 두 줄 통째로 붙여넣기:**
+
+```powershell
+# 대상: Windows PowerShell — 아래 한 줄만 진짜 명령이에요. 이 #줄은 설명이라 안전.
+irm https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/youtube-subtitle-converter/install.ps1 | iex
 ```
 
-호환 비결: `curl.exe`(PowerShell의 curl 별명 회피) + `.\install.bat`(두 창 공용 실행) + `&&` 안 씀(PowerShell 토큰 에러 차단).
+**검은 창(명령 프롬프트 cmd, `C:\>`) 이면 — 아래 두 줄 통째로 붙여넣기:**
+
+```bat
+REM 대상: Windows cmd — 받은 뒤 "파일이 있으면"에만 실행 (검사 후 실행)
+curl -fL -o "%TEMP%\ysc-install.bat" "https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/youtube-subtitle-converter/install.bat" && if exist "%TEMP%\ysc-install.bat" call "%TEMP%\ysc-install.bat"
+```
+
+원칙: ① 진입점(`install.bat`/`install.ps1`)은 **순수 영문(ASCII)** — 한국어 윈도우(CP949)에서도 안 깨짐. ② 받은 뒤 **파일 존재를 확인하고 나서** 실행. ③ 한글 안내는 전부 파이썬(`oneshot.py`)이 출력.
 </details>
 
 ---
