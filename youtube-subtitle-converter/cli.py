@@ -37,6 +37,11 @@ def main() -> int:
         choices=["tiny", "base", "small", "medium", "large-v3"],
         help="Whisper 모델 크기 (한국어 실사용 권장: medium 이상, 기본: medium)",
     )
+    parser.add_argument(
+        "--cookies", default=None, metavar="BROWSER",
+        help="유튜브 봇 확인 우회용 브라우저 쿠키 (chrome/edge/firefox). "
+             "데이터센터·클라우드 IP에서만 대개 필요, 가정·학교 IP는 불필요",
+    )
     args = parser.parse_args()
 
     if not parse_video_id(args.url):
@@ -46,7 +51,7 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="subconv_") as tmp:
         print("[1/3] 영상 오디오 내려받는 중...")
         try:
-            audio_path, title = download_audio(args.url, tmp)
+            audio_path, title = download_audio(args.url, tmp, cookies_from_browser=args.cookies)
         except (ValueError, RuntimeError) as e:
             print(f"오류: {e}", file=sys.stderr)
             return 1

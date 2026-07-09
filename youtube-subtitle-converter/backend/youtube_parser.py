@@ -27,14 +27,22 @@ def parse_video_id(url: str) -> str | None:
     return None
 
 
-def download_audio(url: str, output_dir: str | Path) -> tuple[Path, str]:
+def download_audio(
+    url: str,
+    output_dir: str | Path,
+    cookies_from_browser: str | None = None,
+) -> tuple[Path, str]:
     """영상의 오디오 트랙을 output_dir에 내려받는다.
 
+    Args:
+        cookies_from_browser: 유튜브 "봇 확인" 차단을 만나면 브라우저 쿠키로 우회.
+            "chrome" / "edge" / "firefox" 등. 데이터센터 IP(클라우드·CI)에서 흔히 필요하고,
+            일반 가정·학교 IP에서는 대개 불필요.
     Returns:
         (오디오 파일 경로, 영상 제목)
     Raises:
         ValueError: URL에서 영상 ID를 찾지 못한 경우
-        RuntimeError: 다운로드 실패
+        RuntimeError: 다운로드 실패 (봇 차단 시 안내 메시지 포함)
     """
     import yt_dlp  # 무거운 import는 지연 로딩
 
@@ -53,10 +61,19 @@ def download_audio(url: str, output_dir: str | Path) -> tuple[Path, str]:
         "quiet": True,
         "no_warnings": True,
     }
+    if cookies_from_browser:
+        ydl_opts["cookiesfrombrowser"] = (cookies_from_browser,)
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
     except yt_dlp.utils.DownloadError as e:
+        msg = str(e)
+        if "not a bot" in msg or "Sign in to confirm" in msg:
+            raise RuntimeError(
+                "유튜브가 봇 확인을 요구했습니다. 로그인된 브라우저의 쿠키가 필요합니다 — "
+                "CLI에서는 --cookies chrome (또는 edge/firefox) 옵션을 붙여 다시 시도하세요. "
+                "가정·학교 등 일반 네트워크에서는 대개 필요 없습니다."
+            ) from e
         raise RuntimeError(f"영상 다운로드 실패: {e}") from e
 
     title = info.get("title", "Untitled")
