@@ -35,7 +35,18 @@ if (-not $base) { Danger "GitHub에서 패키지를 찾지 못했습니다. 인�
 $dest = Join-Path $HOME "portable-ai-setup_Ver$v"
 New-Item -ItemType Directory -Force -Path $dest, "$dest/prompts", "$dest/templates", "$dest/locations" | Out-Null
 foreach ($f in $files) {
-  Invoke-WebRequest "$base/$f" -OutFile (Join-Path $dest $f) -UseBasicParsing
+  # 429(요청 과다) 등 일시 오류 대비: 최대 4회 재시도, 점증 대기
+  $ok = $false
+  for ($try = 1; $try -le 4; $try++) {
+    try {
+      Invoke-WebRequest "$base/$f" -OutFile (Join-Path $dest $f) -UseBasicParsing
+      $ok = $true; break
+    } catch {
+      if ($try -lt 4) { Start-Sleep -Seconds ($try * 3) }
+    }
+  }
+  if (-not $ok) { Danger "다운로드 실패: $f — 잠시 후 다시 실행하세요."; exit 1 }
+  Start-Sleep -Milliseconds 300  # 연속 요청 간격(레이트리밋 예방)
 }
 
 # 3) Claude Code 반자동 설정 (설정 파일이 없을 때만 생성 — 기존 설정 보호)

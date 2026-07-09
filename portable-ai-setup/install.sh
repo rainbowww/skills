@@ -29,7 +29,10 @@ done
 DEST="$HOME/portable-ai-setup_Ver$V"
 mkdir -p "$DEST"/{prompts,templates,locations}
 for f in "${FILES[@]}"; do
-  curl -fsSL "$BASE/$f" -o "$DEST/$f"
+  # 429(요청 과다) 등 일시 오류 대비: 최대 4회 재시도, 점증 대기 + 요청 간격
+  curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors "$BASE/$f" -o "$DEST/$f" \
+    || { danger "다운로드 실패: $f — 잠시 후 다시 실행하세요."; exit 1; }
+  sleep 0.3
 done
 
 # Claude Code 반자동 설정 (설정 파일이 없을 때만 생성 — 기존 설정 보호)
