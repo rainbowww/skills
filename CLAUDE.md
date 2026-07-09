@@ -161,6 +161,16 @@ Guidelines:
 
 ## Collaboration rules (user preferences — always follow)
 
+**0. 친절 코딩 (북극성 — 다른 모든 규칙의 이유).** 기술이 좋아도 그 가치가
+   실제로 사람에게 닿아야 한다. 기술이 없는 학생도, 장애가 있는 사람도 **같은
+   문명을 똑같이 누려야** 한다 — 이것이 최우선이다. 그래서 설치는 복붙 한 줄로,
+   결과는 자동으로 열어주고, 진행 상황은 눈에 보이게, 화면은 접근성(자막·글자
+   크기·스크린리더·색 대비)을 갖추고, 실패해도 무섭지 않게 안내한다. "동작한다"가
+   아니라 "가장 못 다루는 사람도 끝까지 쓸 수 있다"가 완료의 기준이다.
+   (Kind coding: the value of good tech must actually reach people — a student
+   with no skills and a person with a disability must enjoy the same civilization.
+   Done means the least technical person can use it end to end, not merely that it runs.)
+
 The repository owner has set these standing rules for every session in this repo:
 
 1. **Respond in Korean** (한국어로 답변). Code, file contents, and commit
