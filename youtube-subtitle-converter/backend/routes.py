@@ -127,7 +127,13 @@ def create_app() -> Flask:
     app = Flask(__name__, static_folder=str(FRONTEND_DIR), static_url_path="")
 
     @app.get("/")
-    def index():
+    def home():
+        # 대문(소개) — 손님이 처음 보는 화면. 여기서 '자막 만들기'로 도구(/app)로 이동.
+        return send_from_directory(FRONTEND_DIR, "home.html")
+
+    @app.get("/app")
+    def app_tool():
+        # 실제 자막 도구
         return send_from_directory(FRONTEND_DIR, "index.html")
 
     @app.post("/api/convert")

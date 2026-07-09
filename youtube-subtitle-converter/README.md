@@ -156,7 +156,7 @@ $env:YSC_HOST="0.0.0.0"; .\.venv\Scripts\python app.py
 
 | OS | 재실행 파일 |
 |---|---|
-| 🟦 Windows | **`시작_윈도우.bat`** 더블클릭 |
+| 🟦 Windows | **`start_windows.bat`** 더블클릭 |
 | 🍏🟩 mac/Linux/WSL | `bash start.sh` |
 
 ---
@@ -165,7 +165,7 @@ $env:YSC_HOST="0.0.0.0"; .\.venv\Scripts\python app.py
 
 ```bash
 # 대상(실행 위치): 🟩 Linux·macOS 터미널 (WSL 포함) — bash
-.venv/bin/python cli.py "<유튜브 주소>" --timestamps --output 자막.txt
+.venv/bin/python cli.py "<유튜브 주소>" --timestamps --output subtitle.txt
 ```
 
 옵션: `--timestamps`(타임스탬프 포함), `--output`(저장 파일명), `--model`(whisper 모델 크기), `--cookies`(브라우저 쿠키로 봇 차단 우회).

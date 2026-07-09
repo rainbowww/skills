@@ -27,7 +27,8 @@ APP_FILES = [
     "app.py", "cli.py", "requirements.txt",
     "backend/__init__.py", "backend/routes.py", "backend/youtube_parser.py",
     "backend/transcriber.py", "backend/formatter.py", "backend/captions.py",
-    "frontend/index.html", "frontend/css/style.css", "frontend/js/app.js",
+    "frontend/home.html", "frontend/index.html",
+    "frontend/css/style.css", "frontend/js/app.js",
     # PWA(안드로이드/아이폰 설치형 앱) 껍데기
     "frontend/manifest.webmanifest", "frontend/sw.js",
     "frontend/icons/icon-192.png", "frontend/icons/icon-512.png",
@@ -301,9 +302,13 @@ def main() -> int:
     if not up:
         die("server_timeout", "서버가 30초 내에 응답하지 않음")
     try:
+        # 대문(/)은 소개 페이지 '보이는 소리', 도구(/app)는 '자막 변환기'
         _, home = http_get("/", 5)
-        if "자막 변환기" not in home:
-            die("verify_home", "메인 페이지 내용 확인 실패")
+        if "보이는 소리" not in home:
+            die("verify_home", "대문 페이지 내용 확인 실패")
+        _, tool = http_get("/app", 5)
+        if "자막 변환기" not in tool:
+            die("verify_app", "자막 도구 페이지 내용 확인 실패")
         code = http_post_status("/api/convert", {"url": "https://naver.com/x"})
         if code != 400:
             die("verify_api", f"API 에러 처리 검증 실패 (기대 400, 실제 {code})")
