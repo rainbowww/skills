@@ -269,7 +269,7 @@ def main() -> int:
     # [4] 의존성 (설치돼 있으면 건너뜀)
     progress("의존성 설치", "서버 기동", 4)
     vpy = str(venv_python())
-    check = subprocess.run([vpy, "-c", "import flask, yt_dlp, faster_whisper"], capture_output=True)
+    check = subprocess.run([vpy, "-c", "import flask, yt_dlp, faster_whisper, segno"], capture_output=True)
     if check.returncode == 0:
         skipped.append("deps_present"); info("필요한 프로그램 이미 설치됨 — 건너뜀")
     else:

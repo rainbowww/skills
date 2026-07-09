@@ -28,6 +28,11 @@ def _lan_ip() -> str:
 
 if __name__ == "__main__":
     host = os.environ.get("YSC_HOST", "127.0.0.1")
+    if host == "0.0.0.0":
+        # 폰 접속 모드: LAN 주소를 환경변수로 넘겨 웹앱이 QR을 띄우게 한다
+        _ip = _lan_ip()
+        if _ip:
+            os.environ["YSC_LAN_URL"] = f"http://{_ip}:{PORT}"
     app = create_app()
     if host == "0.0.0.0":
         ip = _lan_ip() or "<이-PC의-IP>"

@@ -171,3 +171,19 @@ $("font-plus").addEventListener("click", () => setFont(+0.1));
 $("font-minus").addEventListener("click", () => setFont(-0.1));
 tsToggle.addEventListener("change", () =>
   tsToggle.setAttribute("aria-checked", String(tsToggle.checked)));
+
+/* ---------- 📱 폰으로 열기: 폰 접속 모드면 QR 카드 표시 ---------- */
+async function initPhoneCard() {
+  try {
+    const res = await fetch("/api/lan");
+    const d = await res.json().catch(() => ({}));
+    if (!d.enabled || !d.url) return;   // PC 전용 모드면 카드 숨김 유지
+    const qrBox = $("qr-box");
+    if (d.qr) qrBox.innerHTML = d.qr;    // 서버가 만든 신뢰된 SVG
+    const link = $("phone-url-link");
+    link.textContent = d.url;
+    link.href = d.url;
+    $("phone-card").hidden = false;
+  } catch (e) { /* 실패해도 웹앱은 그대로 동작 */ }
+}
+initPhoneCard();

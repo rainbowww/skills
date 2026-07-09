@@ -140,6 +140,27 @@ def create_app() -> Flask:
         ).start()
         return jsonify(job_id=job_id), 202
 
+    @app.get("/api/lan")
+    def lan():
+        """폰 접속 모드일 때, 폰에서 열 주소와 QR 코드(SVG)를 준다.
+        app.py 가 YSC_HOST=0.0.0.0 로 켜지면 환경변수 YSC_LAN_URL 을 채운다.
+        QR 스캔 한 번이면 폰에서 바로 열려 — IP 타이핑이 필요 없다(친절 코딩)."""
+        import os
+        url = os.environ.get("YSC_LAN_URL", "")
+        if not url:
+            return jsonify(enabled=False)
+        qr_svg = ""
+        try:
+            import io
+            import segno
+            buf = io.BytesIO()
+            segno.make(url, error="m").save(buf, kind="svg", scale=6, border=2,
+                                            dark="#333333", light="#FFFFFF")
+            qr_svg = buf.getvalue().decode("utf-8")
+        except Exception:
+            qr_svg = ""  # QR 실패해도 주소는 보여준다
+        return jsonify(enabled=True, url=url, qr=qr_svg)
+
     @app.get("/api/progress/<job_id>")
     def progress(job_id: str):
         with _lock:
