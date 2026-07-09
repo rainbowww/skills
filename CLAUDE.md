@@ -159,6 +159,26 @@ Guidelines:
 - Do not open PRs against this repo (they are auto-closed). Do not modify skill
   content unless explicitly asked for a specific skill.
 
+## Collaboration rules (user preferences — always follow)
+
+The repository owner has set these standing rules for every session in this repo:
+
+1. **Respond in Korean** (한국어로 답변). Code, file contents, and commit
+   messages may stay in English.
+2. **Present decisions as A/B/C choices** — when a decision is needed, offer
+   2–4 concrete labeled options (via `AskUserQuestion` when available) instead
+   of long prose. The user prefers picking a letter over typing.
+3. **Verify before answering — never guess.** If a claim can be checked with a
+   command or file read, check it first. If something was not verified, say so
+   explicitly ("확인 안 된 추측입니다"). Hallucinated-sounding answers are the
+   user's top frustration.
+4. **Semi-auto operation (반자동):** proceed without asking for routine work —
+   reading, editing, and creating files inside this repo. Pause and confirm
+   only for hard-to-reverse actions: deletions (`rm`), force-pushes, or
+   anything outside the working folder.
+5. **Keep answers short and lead with the outcome.** Minimize back-and-forth;
+   don't ask a follow-up question when a reasonable default exists.
+
 ## Git workflow (for this task/session)
 
 - Development branch for the current task: `claude/claude-md-docs-8r1kk7`.
