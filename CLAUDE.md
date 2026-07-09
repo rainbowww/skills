@@ -182,6 +182,10 @@ The repository owner has set these standing rules for every session in this repo
    comment line must state where it runs: 🟦 Windows PowerShell / 🟩
    Linux·macOS terminal bash (including WSL) / ☁️ cloud auto-run (not run by
    a human). A command without its execution target is incomplete.
+   *Why: pasting a command into the wrong window is a disaster vector —
+   PowerShell syntax dies (or silently misbehaves) in bash and vice versa,
+   and a cloud auto-run script executed by hand configures the wrong
+   machine. Linux↔macOS are mutually safe (both bash), hence one label.*
 7. **Test by actually executing — never hand off verification.** "Written but
    needs testing on your machine" is unfinished work in disguise. Exhaust every
    way to run the real thing here first (install the runtime in the sandbox,
