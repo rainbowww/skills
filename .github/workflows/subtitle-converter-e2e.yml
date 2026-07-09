@@ -84,14 +84,27 @@ jobs:
             && { echo '=== 실제 유튜브 자막 ==='; cat yt_real.txt; echo 'PASS: real YouTube (this runner was not blocked)'; } \
             || echo 'SKIP: 이 러너 IP는 유튜브에 차단됨 (앱 버그 아님 — 실기기에서 동작)'
 
-      - name: "[4] 웹앱 기동 + API 스모크"
+      - name: "[4] 웹앱 기동 + API·PWA·진행률 스모크"
         run: |
           python app.py & sleep 4
+          # 기본 화면 + 진행바 UI
           curl -sf http://127.0.0.1:5123/ | grep -q "자막 변환기"
+          curl -sf http://127.0.0.1:5123/ | grep -q "progress-bar"
           curl -sf http://127.0.0.1:5123/css/style.css > /dev/null
+          # PWA(안드로이드/아이폰 설치형) 자산
+          curl -sf http://127.0.0.1:5123/manifest.webmanifest | grep -q "standalone"
+          curl -sf http://127.0.0.1:5123/sw.js > /dev/null
+          curl -sf http://127.0.0.1:5123/icons/icon-192.png > /dev/null
+          # 잘못된 URL → 400 error
           curl -s -X POST http://127.0.0.1:5123/api/convert -H 'Content-Type: application/json' \
             -d '{"url":"https://naver.com/x"}' | grep -q "error"
-          echo "PASS: web app smoke"
+          # 정상형식 URL → 202 + job_id, 진행률 폴링 동작 확인
+          JOB=$(curl -s -X POST http://127.0.0.1:5123/api/convert -H 'Content-Type: application/json' \
+            -d '{"url":"https://youtu.be/dQw4w9WgXcQ"}' | python -c "import sys,json;print(json.load(sys.stdin)['job_id'])")
+          test -n "$JOB"
+          curl -sf "http://127.0.0.1:5123/api/progress/$JOB" | grep -q "stage"
+          curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:5123/api/progress/nope" | grep -q 404
+          echo "PASS: web app + PWA + progress smoke"
 
       - name: 결과물 업로드
         if: always()
