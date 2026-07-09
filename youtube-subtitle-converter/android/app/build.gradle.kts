@@ -33,4 +33,8 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
+
+    // 2단계: 폰에서 유튜브 오디오 스트림 추출 (NewPipeExtractor + OkHttp 다운로더)
+    implementation("com.github.TeamNewPipe:NewPipeExtractor:v0.24.3")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }
