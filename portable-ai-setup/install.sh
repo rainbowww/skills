@@ -20,7 +20,7 @@ FILES=(VERSION SKILL.md README.md export.sh export.ps1 install.sh install.ps1
 
 BASE=""
 for b in "${BRANCHES[@]}"; do
-  if V=$(curl -fsSL "https://raw.githubusercontent.com/$REPO/$b/portable-ai-setup/VERSION" 2>/dev/null | tr -d '[:space:]'); then
+  if V=$(curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors "https://raw.githubusercontent.com/$REPO/$b/portable-ai-setup/VERSION" 2>/dev/null | tr -d '[:space:]') && [ -n "$V" ]; then
     BASE="https://raw.githubusercontent.com/$REPO/$b/portable-ai-setup"
     break
   fi

@@ -23,12 +23,16 @@ $files = @(
 # 1) 살아있는 브랜치 탐색
 $base = $null
 foreach ($b in $branches) {
-  try {
-    # [string] 캐스팅 필수: 숫자만 있는 VERSION을 irm이 Int64로 파싱해 .Trim()이 없어 죽는 버그 방지
-    $v = ([string](Invoke-RestMethod "https://raw.githubusercontent.com/$repo/$b/portable-ai-setup/VERSION")).Trim()
-    $base = "https://raw.githubusercontent.com/$repo/$b/portable-ai-setup"
-    break
-  } catch { continue }
+  # 버전 확인 단계에도 재시도 (429 일시 차단 대비)
+  for ($try = 1; $try -le 4; $try++) {
+    try {
+      # [string] 캐스팅 필수: 숫자만 있는 VERSION을 irm이 Int64로 파싱해 .Trim()이 없어 죽는 버그 방지
+      $v = ([string](Invoke-RestMethod "https://raw.githubusercontent.com/$repo/$b/portable-ai-setup/VERSION")).Trim()
+      $base = "https://raw.githubusercontent.com/$repo/$b/portable-ai-setup"
+      break
+    } catch { if ($try -lt 4) { Start-Sleep -Seconds ($try * 3) } }
+  }
+  if ($base) { break }
 }
 if (-not $base) { Danger "GitHub에서 패키지를 찾지 못했습니다. 인터넷 연결을 확인하세요."; exit 1 }
 

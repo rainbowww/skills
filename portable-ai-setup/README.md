@@ -31,6 +31,18 @@ curl -sSL https://raw.githubusercontent.com/rainbowww/skills/main/portable-ai-se
 - Windows: `.\export.ps1` → `portable-ai-setup_Ver{N}.zip`
 - macOS/Linux: `bash export.sh` → `portable-ai-setup_Ver{N}.zip`
 
+## claude.ai/code 클라우드 환경 자동 설치 (설정 스크립트)
+
+claude.ai/code → 환경 설정 → **"설정 스크립트"** 칸에 아래를 붙여넣으면, **새 클라우드 세션이 시작될 때마다 이 패키지가 자동 설치**된다 (매번 설명할 필요 없음). "환경 변수" 칸은 비워 둔다.
+
+```bash
+#!/bin/bash
+# portable-ai-setup 원샷 자동설치 (main 우선, 없으면 작업 브랜치)
+{ curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors https://raw.githubusercontent.com/rainbowww/skills/main/portable-ai-setup/install.sh \
+  || curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/portable-ai-setup/install.sh; } | bash \
+  || echo "portable-ai-setup 설치 실패 — 세션은 계속"
+```
+
 ## 버전 규칙 (혼동 방지 — 반드시 준수)
 
 같은 이름의 zip이 두 개 돌아다니는 사고를 막기 위한 절대 규칙:
@@ -53,6 +65,7 @@ curl -sSL https://raw.githubusercontent.com/rainbowww/skills/main/portable-ai-se
 | Ver6 | 2026-07-09 | install.ps1 notepad 자동열기를 Windows 전용으로 가드(맥/리눅스 pwsh는 경로 안내). 13개 파일 전체 다운로드 GitHub 상대 실전 테스트 통과. **실제 Windows PowerShell 5.1에서 사용자 실행 성공 확인** |
 | Ver7 | 2026-07-09 | claude.ai "Claude 지침" 필드 붙여넣기 전용본 추가 (`prompts/claudeai-instructions.md` — B절에서 플레이스홀더·중복 안전절·운영자 설명 제거) |
 | Ver8 | 2026-07-09 | 복붙 전용 파일 `prompts/PASTE-claude-ai.txt` 추가 — 내용 전체가 붙여넣을 것(Ctrl+A→Ctrl+C, 고를 필요 없음). 설치기가 이 파일을 자동으로 엶 |
+| Ver9 | 2026-07-09 | 버전 확인 단계에도 재시도 추가(429 대비 — 실테스트로 발견). claude.ai/code 클라우드 환경용 설정 스크립트 문서화 |
 
 ## 갱신 규칙
 
