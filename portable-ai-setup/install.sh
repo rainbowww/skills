@@ -14,6 +14,7 @@ REPO="rainbowww/skills"
 BRANCHES=("main" "claude/claude-md-docs-8r1kk7")
 FILES=(VERSION SKILL.md README.md export.sh export.ps1 install.sh install.ps1
   prompts/universal-system-prompt.md prompts/final-work-instruction.md
+  prompts/claudeai-instructions.md prompts/PASTE-claude-ai.txt
   templates/CLAUDE.md.template
   locations/A-company.md locations/B-home.md locations/C-school.md)
 
@@ -52,5 +53,5 @@ fi
 
 echo ""
 info "설치 완료: 버전 $V  →  $DEST"
-info "다음 파일에서 [B절 코드블록]을 복사해 AI 도구에 붙여넣으면 끝: $DEST/prompts/universal-system-prompt.md"
+info "복붙 전용 파일(전체선택→복사→붙여넣기, 고를 필요 없음): $DEST/prompts/PASTE-claude-ai.txt"
 warn "공용 PC라면 사용 후 삭제: rm -rf '$DEST'"

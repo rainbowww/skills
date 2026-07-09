@@ -52,6 +52,7 @@ curl -sSL https://raw.githubusercontent.com/rainbowww/skills/main/portable-ai-se
 | Ver5 | 2026-07-09 | 설치기 재시도 로직 추가: GitHub 429(요청 과다) 시 파일별 최대 4회 재시도 + 요청 간격 0.3초 |
 | Ver6 | 2026-07-09 | install.ps1 notepad 자동열기를 Windows 전용으로 가드(맥/리눅스 pwsh는 경로 안내). 13개 파일 전체 다운로드 GitHub 상대 실전 테스트 통과. **실제 Windows PowerShell 5.1에서 사용자 실행 성공 확인** |
 | Ver7 | 2026-07-09 | claude.ai "Claude 지침" 필드 붙여넣기 전용본 추가 (`prompts/claudeai-instructions.md` — B절에서 플레이스홀더·중복 안전절·운영자 설명 제거) |
+| Ver8 | 2026-07-09 | 복붙 전용 파일 `prompts/PASTE-claude-ai.txt` 추가 — 내용 전체가 붙여넣을 것(Ctrl+A→Ctrl+C, 고를 필요 없음). 설치기가 이 파일을 자동으로 엶 |
 
 ## 갱신 규칙
 

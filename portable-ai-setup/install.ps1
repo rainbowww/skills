@@ -15,6 +15,7 @@ $files = @(
   "VERSION", "SKILL.md", "README.md", "export.sh", "export.ps1",
   "install.sh", "install.ps1",
   "prompts/universal-system-prompt.md", "prompts/final-work-instruction.md",
+  "prompts/claudeai-instructions.md", "prompts/PASTE-claude-ai.txt",
   "templates/CLAUDE.md.template",
   "locations/A-company.md", "locations/B-home.md", "locations/C-school.md"
 )
@@ -63,14 +64,14 @@ if (-not (Test-Path $ccSettings)) {
   Info "Claude Code 설정이 이미 있어 건드리지 않았습니다. 반자동 전환은 Claude Code에서 Shift+Tab."
 }
 
-# 4) 완료 안내 + 프롬프트 파일 자동 열기
+# 4) 완료 안내 + 복붙 전용 파일 자동 열기 (내용 전체가 붙여넣을 것 — 고를 필요 없음)
 Write-Host ""
 Info "설치 완료: 버전 $v  →  $dest"
-Info "지금 열리는 파일에서 [B절 코드블록]을 복사해 AI 도구에 붙여넣으면 끝."
+Info "지금 열리는 파일에서 Ctrl+A(전체선택) → Ctrl+C(복사) → AI 도구 지침란에 붙여넣기. 그게 전부."
 Warn "공용 PC라면 사용 후 폴더 삭제: Remove-Item -Recurse '$dest'"
 # notepad는 Windows 전용 — 맥/리눅스 pwsh에서는 경로만 안내
 if ($env:OS -eq "Windows_NT") {
-  Start-Process notepad (Join-Path $dest "prompts/universal-system-prompt.md")
+  Start-Process notepad (Join-Path $dest "prompts/PASTE-claude-ai.txt")
 } else {
-  Info "파일 위치: $(Join-Path $dest 'prompts/universal-system-prompt.md')"
+  Info "복붙 전용 파일: $(Join-Path $dest 'prompts/PASTE-claude-ai.txt')"
 }
