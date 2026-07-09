@@ -49,7 +49,8 @@ curl -sSL https://raw.githubusercontent.com/rainbowww/skills/main/portable-ai-se
 | Ver2 | 2026-07-09 | export.ps1 크로스플랫폼 수정(Join-Path), PowerShell 7.6.3 실테스트 통과, 버전 체계 도입 |
 | Ver3 | 2026-07-09 | 원샷 설치기 추가 (install.ps1 / install.sh — 한 줄 실행으로 최신 버전 자동 다운로드·설치) |
 | Ver4 | 2026-07-09 | install.ps1 버그 수정: 숫자 VERSION을 Int64로 파싱해 .Trim()에서 죽던 문제([string] 캐스팅) |
-| Ver5 | 2026-07-09 | 설치기 재시도 로직 추가: GitHub 429(요청 과다) 시 파일별 최대 4회 재시도 + 요청 간격 0.3초. bash·PowerShell 모두 GitHub 상대 실전 테스트 |
+| Ver5 | 2026-07-09 | 설치기 재시도 로직 추가: GitHub 429(요청 과다) 시 파일별 최대 4회 재시도 + 요청 간격 0.3초 |
+| Ver6 | 2026-07-09 | install.ps1 notepad 자동열기를 Windows 전용으로 가드(맥/리눅스 pwsh는 경로 안내). **13개 파일 전체 다운로드 GitHub 상대 실전 테스트 통과** |
 
 ## 갱신 규칙
 

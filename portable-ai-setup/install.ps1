@@ -68,4 +68,9 @@ Write-Host ""
 Info "설치 완료: 버전 $v  →  $dest"
 Info "지금 열리는 파일에서 [B절 코드블록]을 복사해 AI 도구에 붙여넣으면 끝."
 Warn "공용 PC라면 사용 후 폴더 삭제: Remove-Item -Recurse '$dest'"
-Start-Process notepad (Join-Path $dest "prompts/universal-system-prompt.md")
+# notepad는 Windows 전용 — 맥/리눅스 pwsh에서는 경로만 안내
+if ($env:OS -eq "Windows_NT") {
+  Start-Process notepad (Join-Path $dest "prompts/universal-system-prompt.md")
+} else {
+  Info "파일 위치: $(Join-Path $dest 'prompts/universal-system-prompt.md')"
+}
