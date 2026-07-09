@@ -1,0 +1,42 @@
+<script>
+/* HERMES 콘솔에 복사/붙여넣기 버튼을 더한다. 서버 명령 실행 없음(클라이언트 UI만). 안전.
+   console.html 끝에 이 블록을 붙이면, 화면이 다시 그려져도 계속 버튼을 유지한다. */
+(function () {
+  function add() {
+    // ① 붙여넣기(초기화) — 셸 명령 textarea 옆
+    var ta = document.querySelector('textarea');
+    if (ta && !(ta.parentNode && ta.parentNode.querySelector('.ysc-paste'))) {
+      var pb = document.createElement('button');
+      pb.className = 'ysc-paste'; pb.type = 'button';
+      pb.textContent = '📋 붙여넣기(초기화)';
+      pb.style.cssText = 'margin:6px 4px;padding:8px 14px;border-radius:8px;border:1px solid #4a9eff;background:#1e293b;color:#fff;cursor:pointer;font-size:13px';
+      pb.onclick = async function () {
+        ta.value = '';
+        try {
+          ta.value = await navigator.clipboard.readText();
+          ta.dispatchEvent(new Event('input', { bubbles: true })); ta.focus();
+        } catch (e) { ta.focus(); alert('비웠어요. Ctrl+V 로 붙여넣으세요.'); }
+      };
+      ta.parentNode.insertBefore(pb, ta.nextSibling);
+    }
+    // ② 복사 — '응답' 상자 오른쪽 위
+    var lab = [].slice.call(document.querySelectorAll('*')).filter(function (e) {
+      return !e.children.length && e.textContent.trim() === '응답';
+    }).pop();
+    var box = lab ? lab.parentElement : null;
+    if (box && !box.querySelector('.ysc-copy')) {
+      if (getComputedStyle(box).position === 'static') box.style.position = 'relative';
+      var cb = document.createElement('button');
+      cb.className = 'ysc-copy'; cb.type = 'button'; cb.textContent = '📋 복사';
+      cb.style.cssText = 'position:absolute;top:6px;right:6px;z-index:99999;padding:6px 12px;border-radius:8px;border:1px solid #4a9eff;background:#1e293b;color:#fff;cursor:pointer;font-size:13px';
+      cb.onclick = async function () {
+        var t = box.innerText.replace(/^\s*응답\s*/, '');
+        try { await navigator.clipboard.writeText(t); cb.textContent = '✓ 복사됨'; setTimeout(function () { cb.textContent = '📋 복사'; }, 1500); }
+        catch (e) { alert('마우스로 긁어 Ctrl+C 하세요'); }
+      };
+      box.appendChild(cb);
+    }
+  }
+  add(); setInterval(add, 1500);
+})();
+</script>

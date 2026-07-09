@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HERMES 함대 관제</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0e1526; overflow: hidden; }
+  /* 위 10% = 맥박판(함대 상태), 아래 90% = HERMES 콘솔 */
+  .pulse { display: block; width: 100%; height: 10vh; border: 0; border-bottom: 2px solid #26355c; }
+  .main  { display: block; width: 100%; height: 90vh; border: 0; }
+</style>
+</head>
+<body>
+  <!-- 맥박판: 함대 노드 생존/사망 (fleet_monitor.py, 포트 8791) -->
+  <iframe class="pulse" src="http://192.168.0.61:8791/" title="함대 맥박판"></iframe>
+  <!-- HERMES 콘솔 (그대로 감싸기 — 코드 안 건드림) -->
+  <iframe class="main" src="http://192.168.0.40:18091/" title="HERMES 콘솔"></iframe>
+</body>
+</html>
