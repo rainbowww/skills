@@ -47,48 +47,65 @@ def _worker(job_id: str, url: str, include_ts: bool, model_size: str) -> None:
     from .youtube_parser import download_audio
     from .transcriber import transcribe_audio
     from .formatter import format_subtitles
+    from .captions import fetch_captions
 
     try:
-        _set(job_id, stage="접속 중", percent=2, detail="영상 정보를 확인하고 있어요")
-        with tempfile.TemporaryDirectory(prefix="subconv_") as tmp:
+        # [1순위] 영상에 이미 있는 자막(VTT)을 먼저 가져온다 — 빠르고 안정적, STT 불필요.
+        _set(job_id, stage="자막 확인", percent=5, detail="영상에 있는 자막을 먼저 찾는 중...")
+        cap = None
+        try:
+            cap = fetch_captions(url)
+        except Exception:  # noqa: BLE001 — 실패는 조용히 폴백
+            cap = None
 
-            def dl_cb(d: dict) -> None:
-                total = d.get("total") or 0
-                got = d.get("downloaded") or 0
-                if d.get("status") == "downloading":
-                    pct = 3 + (got / total * 42 if total else 0)
-                    mb = got / 1_000_000
-                    parts = [f"오디오 내려받는 중  {mb:.1f}MB"]
+        if cap:
+            segments, title = cap
+            _set(job_id, title=title, stage="자막 가져옴", percent=96,
+                 detail=f"영상에 있던 자막을 바로 가져왔어요 · 문장 {len(segments)}개")
+        else:
+            # [폴백] 자막이 없으면 우리 엔진(Whisper)이 목소리로 직접 만든다.
+            # 자막 없다고 장애 학생을 빈손으로 돌려보내지 않는다.
+            _set(job_id, stage="자막 없음 → 직접 생성", percent=8,
+                 detail="영상에 자막이 없어, 목소리로 직접 만들어요 (조금 걸려요)")
+            with tempfile.TemporaryDirectory(prefix="subconv_") as tmp:
+
+                def dl_cb(d: dict) -> None:
+                    total = d.get("total") or 0
+                    got = d.get("downloaded") or 0
+                    if d.get("status") == "downloading":
+                        pct = 10 + (got / total * 35 if total else 0)
+                        mb = got / 1_000_000
+                        parts = [f"오디오 내려받는 중  {mb:.1f}MB"]
+                        if total:
+                            parts[0] += f" / {total/1_000_000:.1f}MB"
+                        if d.get("speed"):
+                            parts.append(f"{d['speed']/1_000_000:.1f}MB/s")
+                        if d.get("eta"):
+                            parts.append(f"남은 시간 약 {_mmss(d['eta'])}")
+                        _set(job_id, stage="다운로드", percent=int(min(45, pct)),
+                             detail="  ·  ".join(parts))
+                    elif d.get("status") == "finished":
+                        _set(job_id, stage="다운로드", percent=45,
+                             detail="오디오 받기 완료 — 음성 인식을 준비합니다")
+
+                audio_path, title = download_audio(url, tmp, progress_cb=dl_cb)
+                _set(job_id, title=title)
+
+                def model_cb() -> None:
+                    _set(job_id, stage="음성 인식 준비", percent=47,
+                         detail="음성 인식 모델을 준비하고 있어요 (처음 한 번은 수 분 걸릴 수 있어요)")
+
+                def tr_cb(cur: float, total: float, n: int) -> None:
+                    pct = 50 + (cur / total * 47 if total else 0)
+                    detail = f"음성을 글로 옮기는 중  {_mmss(cur)}"
                     if total:
-                        parts[0] += f" / {total/1_000_000:.1f}MB"
-                    if d.get("speed"):
-                        parts.append(f"{d['speed']/1_000_000:.1f}MB/s")
-                    if d.get("eta"):
-                        parts.append(f"남은 시간 약 {_mmss(d['eta'])}")
-                    _set(job_id, stage="다운로드", percent=int(min(45, pct)),
-                         detail="  ·  ".join(parts))
-                elif d.get("status") == "finished":
-                    _set(job_id, stage="다운로드", percent=45,
-                         detail="오디오 받기 완료 — 음성 인식을 준비합니다")
+                        detail += f" / {_mmss(total)}"
+                    detail += f"  ·  문장 {n}개 인식"
+                    _set(job_id, stage="음성 인식", percent=int(min(97, pct)), detail=detail)
 
-            audio_path, title = download_audio(url, tmp, progress_cb=dl_cb)
-            _set(job_id, title=title)
-
-            def model_cb() -> None:
-                _set(job_id, stage="음성 인식 준비", percent=47,
-                     detail="음성 인식 모델을 준비하고 있어요 (처음 한 번은 수 분 걸릴 수 있어요)")
-
-            def tr_cb(cur: float, total: float, n: int) -> None:
-                pct = 50 + (cur / total * 47 if total else 0)
-                detail = f"음성을 글로 옮기는 중  {_mmss(cur)}"
-                if total:
-                    detail += f" / {_mmss(total)}"
-                detail += f"  ·  문장 {n}개 인식"
-                _set(job_id, stage="음성 인식", percent=int(min(97, pct)), detail=detail)
-
-            segments = transcribe_audio(
-                audio_path, model_size=model_size, progress_cb=tr_cb, model_cb=model_cb
-            )
+                segments = transcribe_audio(
+                    audio_path, model_size=model_size, progress_cb=tr_cb, model_cb=model_cb
+                )
 
         _set(job_id, stage="정리", percent=98, detail="자막을 보기 좋게 정리하고 있어요")
         text = format_subtitles(segments, include_timestamp=include_ts)
