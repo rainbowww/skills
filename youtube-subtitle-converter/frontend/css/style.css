@@ -12,6 +12,9 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* hidden 속성은 display 지정 요소(.loading-overlay 등)보다 우선해야 함 — 안 그러면 로딩이 안 꺼짐 */
+[hidden] { display: none !important; }
+
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
