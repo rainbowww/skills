@@ -1,0 +1,110 @@
+<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>자막 변환기 — 앱 다운로드</title>\n<meta name="theme-color" content="#88B04B">\n<style>
+  :root{
+    --bg:#F5F5F3; --card:#FFFFFF; --ink:#2C2E27; --muted:#6B6F63;
+    --green:#7BA33A; --green-strong:#6F9A3B; --green-ink:#FFFFFF;
+    --line:#E4E5DE; --ring:#3C5A16;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#181A15; --card:#22251D; --ink:#EDEFE6; --muted:#A6AB98;
+      --green:#9FD24E; --green-strong:#B4E06A; --green-ink:#14210A;
+      --line:#333829; --ring:#B4E06A; }
+  }
+  :root[data-theme="light"]{ --bg:#F5F5F3; --card:#FFFFFF; --ink:#2C2E27; --muted:#6B6F63;
+    --green:#7BA33A; --green-strong:#6F9A3B; --green-ink:#FFFFFF; --line:#E4E5DE; --ring:#3C5A16; }
+  :root[data-theme="dark"]{ --bg:#181A15; --card:#22251D; --ink:#EDEFE6; --muted:#A6AB98;
+    --green:#9FD24E; --green-strong:#B4E06A; --green-ink:#14210A; --line:#333829; --ring:#B4E06A; }
+
+  *{box-sizing:border-box}
+  body{margin:0}
+  .wrap{
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    background:var(--bg); color:var(--ink); min-height:100vh;
+    padding:clamp(20px,5vw,48px) 18px 56px;
+    display:flex; flex-direction:column; align-items:center; gap:26px;
+    font-size:19px; line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  .hero{text-align:center; max-width:560px}
+  .eyebrow{color:var(--green-strong); font-weight:700; letter-spacing:.02em;
+    font-size:.92rem; margin:0 0 10px}
+  .hero h1{font-size:clamp(2.1rem,7vw,2.8rem); margin:0; font-weight:800;
+    letter-spacing:-.02em; text-wrap:balance}
+  .hero h1::after{content:""; display:block; width:64px; height:5px;
+    background:var(--green); border-radius:3px; margin:14px auto 0}
+  .hero .sub{color:var(--muted); margin:16px 0 0; font-size:1.05rem}
+
+  .card{width:100%; max-width:560px; background:var(--card);
+    border:1px solid var(--line); border-radius:22px;
+    padding:clamp(20px,5vw,32px); box-shadow:0 6px 28px rgba(0,0,0,.06)}
+
+  .download{
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    text-decoration:none; background:var(--green); color:var(--green-ink);
+    border-radius:18px; padding:22px 20px; min-height:112px; justify-content:center;
+    box-shadow:0 6px 0 var(--green-strong); transition:transform .08s, box-shadow .08s;
+  }
+  .download:hover{filter:saturate(1.05)}
+  .download:active{transform:translateY(4px); box-shadow:0 2px 0 var(--green-strong)}
+  .download:focus-visible{outline:4px solid var(--ring); outline-offset:4px}
+  .dl-emoji{font-size:2rem; line-height:1}
+  .dl-main{font-size:1.5rem; font-weight:800}
+  .dl-sub{font-size:.95rem; opacity:.92}
+  .hint{text-align:center; color:var(--muted); margin:14px 0 0; font-size:1rem}
+
+  .steps{list-style:none; margin:22px 0 0; padding:0; display:flex; flex-direction:column; gap:14px}
+  .steps li{display:flex; align-items:center; gap:14px}
+  .steps .n{flex:0 0 auto; width:40px; height:40px; border-radius:50%;
+    background:var(--green); color:var(--green-ink); font-weight:800;
+    display:grid; place-items:center; font-size:1.15rem}
+  .steps b{font-weight:800}
+
+  .qr{width:100%; max-width:560px; text-align:center; color:var(--muted)}
+  .qr img{width:180px; height:180px; border-radius:14px; background:#fff; padding:8px;
+    border:1px solid var(--line)}
+  .qr p{margin:12px 0 0; font-size:1rem}
+
+  .alt{width:100%; max-width:560px; background:var(--card); border:1px solid var(--line);
+    border-radius:18px; padding:20px 22px}
+  .alt h2{margin:0 0 8px; font-size:1.15rem}
+  .alt p{margin:0; color:var(--muted); font-size:1rem}
+
+  .foot{max-width:560px; text-align:center; color:var(--muted); font-size:.95rem}
+  @media (prefers-reduced-motion:reduce){ .download{transition:none} }
+</style>
+</head>\n<body>\n<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">귀 대신 눈으로 · 모든 학생을 위한 자막</p>
+    <h1>자막 변환기</h1>
+    <p class="sub">유튜브 목소리를 한글 자막으로. 듣는 대신, 읽으세요.</p>
+  </header>
+
+  <main class="card" aria-label="앱 다운로드">
+    <a class="download" href="https://github.com/rainbowww/skills/releases/download/android-latest/subtitle-converter.apk" aria-label="안드로이드 자막 변환기 앱 다운로드(APK)">
+      <span class="dl-emoji" aria-hidden="true">📥</span>
+      <span class="dl-main">안드로이드 앱 다운로드</span>
+      <span class="dl-sub">폰에서 눌러 설치 · 약 5.6MB</span>
+    </a>
+    <p class="hint">안드로이드 폰에서 이 버튼을 누르면 앱 파일이 받아집니다.</p>
+
+    <ol class="steps">
+      <li><span class="n" aria-hidden="true">1</span><span>위 버튼을 눌러 <b>받기</b></span></li>
+      <li><span class="n" aria-hidden="true">2</span><span>받은 파일 알림을 <b>탭 → 설치</b></span></li>
+      <li><span class="n" aria-hidden="true">3</span><span>“이 출처 허용”이 뜨면 <b>허용</b> 한 번 → 홈에 아이콘</span></li>
+    </ol>
+  </main>
+
+  <section class="qr" aria-label="다른 폰으로 보내기">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXgAAAF4AQMAAABkU3DlAAAABlBMVEUzMzP///8jKH/HAAACHklEQVR42u1bwU7FMAyz+P9/DhprYrcH0JNwT97E02B5Fzd17DSgPruQ+MQnPvH/GI/36m/j+cv6eW5AIr7w2ZX4P65ZM8hH388irKf1Mng68Ifi3GsC4t4Rwd+Kf/9C9HsbBP87+Hf5eMm/wQ/+V/gf6KLbDPQDe/jfjf96+uWO/jHiL1p0aGiW5pC0wdPE/1jaZwhntkTvkODvyv8X5Rdz8tHxnPprrL/UnBDmqa6/4Z8L/N+6B7MR5Hlpo+Bv4n8xXlWyGSg+wz8+/gc7P0v69IpI8y35b+UflZ3iwdgACv/7+Gfx+0p3qbvsPMT/+vIfh+isaUOwMRr+N+r/FjuAfOoqIPlv7P+MB+YxQJuvEvEZ/G3+lxJIq0CNAO33wdPC/zhOwcg97Qgq+sfpv3bXxZfyHP1v9F/qtMBTsFGhyX+v/2qRj6m8M4Qy9iv57+KfmXrYWH8twtabDp62/CfiW0eo6AqCv01/1hTbw/JyA4T/zf2fKh68TNf/6AcFTwv/a8MZbEPr8En6P876u595cVWqxAUEfyP/QNXntgHYkAj+Lvz3joPyPw8Hgr8x/0tOXrZGnLJP8HfpfymxoA+g70Xqry//Qa2Dvd8DjsEl/639Bxn/kZksFoHofyf/HzO3mPk3NQXJ/wv4DyXt49CV88cL+KsZ2ykp579+/qcLlso82jT6361/OPyJU/pE/1/Q//n/9MQnPvE3478BIL/z9fbF99IAAAAASUVORK5CYII=" width="180" height="180"
+         alt="자막 변환기 앱 다운로드 QR 코드" />
+    <p>다른 폰으로 보내기 — <b>폰 카메라로 QR 스캔</b>하면 바로 받아집니다.</p>
+  </section>
+
+  <section class="alt" aria-label="다른 방법">
+    <h2>폰이 아이폰이거나 PC라면</h2>
+    <p>아이폰·PC에서는 브라우저로 씁니다. PC에서 <b>자막 변환기 웹앱</b>을 실행하고,
+       폰 브라우저로 접속하면 됩니다. (설치 불필요)</p>
+  </section>
+
+  <footer class="foot">
+    <p>듣지 못하는 학생도 같은 배움을 누리도록. 자막뉴스·자막방송으로 이어갑니다.</p>
+  </footer>
+</div>\n</body>\n</html>\n
