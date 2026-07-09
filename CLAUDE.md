@@ -214,8 +214,13 @@ The repository owner has set these standing rules for every session in this repo
      file without confirming it's there; neither do we.
    - **Prerequisite = check, then install if missing, then pass.** "installed?
      → yes: skip (pass); no: install then continue." Idempotent, re-runnable.
-   - **After install, SHOW the result** (open the browser / print PASS + paths).
-     Assume the user is NOT a developer: minimal download, the rest by guidance.
+   - **After install, OPEN the result for them — don't tell them to open it.**
+     Auto-launch the browser/app with OS-specific fallbacks tried in order until
+     one works (Windows: `os.startfile` → `explorer <url>` → `cmd /c start`; mac:
+     `open`; Linux: `xdg-open`; then stdlib `webbrowser`). Only if every method
+     fails, print a big copy-me URL. "브라우저에서 …를 여세요" (you open it) is a
+     failure — students don't copy URLs; opening it is the service. Assume the
+     user is NOT a developer: minimal download, the rest done for them.
 9. **Sandbox success ≠ platform success — prove it, don't believe it.** This
    Linux/UTF-8 sandbox cannot run Windows `cmd`/PowerShell 5.1 or its CP949
    codepage, so "it passed in my sandbox" does NOT cover the Windows path. When
