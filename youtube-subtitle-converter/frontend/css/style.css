@@ -23,11 +23,11 @@ body {
   min-height: 100vh;
 }
 
-.container { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+.container { max-width: 760px; width: 100%; margin: 0 auto; padding: clamp(1.5rem, 4vw, 2.75rem) clamp(0.9rem, 3vw, 1.5rem) 4rem; }
 
 /* 헤더 */
 .app-header { text-align: center; margin-bottom: 2rem; }
-.app-header h1 { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.02em; }
+.app-header h1 { font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 700; letter-spacing: -0.02em; }
 .app-header h1::after {
   content: ""; display: block; width: 56px; height: 4px;
   background: var(--greenery); border-radius: 2px; margin: 0.6rem auto 0;
@@ -175,12 +175,30 @@ body {
   clip-path: inset(50%); overflow: hidden; white-space: nowrap;
 }
 
-/* 항목 10: 반응형 — 모바일(인강 보는 대학생 스마트폰) */
+/* 항목 10: 반응형 — PC 모니터(직장인) · 태블릿 · 스마트폰(인강 보는 대학생) 모두 안 깨지게 */
+/* 태블릿·작은 노트북 */
+@media (max-width: 768px) {
+  .options-row { gap: 0.85rem; }
+  .search-row { gap: 0.5rem; }
+}
+/* 스마트폰 세로 */
 @media (max-width: 520px) {
-  .container { padding: 1.5rem 0.9rem 3rem; }
-  .app-header h1 { font-size: 1.55rem; }
+  .container { padding: 1.4rem 0.9rem 3rem; }
+  .tagline { font-size: 0.95rem; }
   .convert-card, .result-card { padding: 1.2rem; }
   .options-row { flex-direction: column; align-items: stretch; }
+  .toggle { justify-content: space-between; }
   .btn-primary { width: 100%; }
+  .search-row { flex-wrap: wrap; }
+  #search-input { min-width: 0; flex: 1 1 100%; }
+  .font-controls { margin-left: auto; }
   .preview { max-height: 55vh; }
+}
+/* 아주 작은 폰(≤360px) — 글자·여백을 더 줄여 절대 안 깨지게 */
+@media (max-width: 360px) {
+  .container { padding: 1.1rem 0.7rem 2.5rem; }
+  .app-header h1 { font-size: 1.4rem; }
+  .convert-card, .result-card { padding: 1rem; }
+  #url-input { font-size: 1rem; padding: 0.85rem 0.9rem; }
+  .btn-primary { font-size: 0.98rem; padding: 0.8rem 1.2rem; }
 }
