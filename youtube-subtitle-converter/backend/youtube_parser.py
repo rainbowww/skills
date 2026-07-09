@@ -40,6 +40,7 @@ def download_audio(
     output_dir: str | Path,
     cookies_from_browser: str | None = None,
     auto_cookies: bool = True,
+    progress_cb=None,
 ) -> tuple[Path, str]:
     """영상의 오디오 트랙을 output_dir에 내려받는다.
 
@@ -51,6 +52,10 @@ def download_audio(
     Args:
         cookies_from_browser: 특정 브라우저 쿠키를 강제 지정("chrome"/"edge"/"firefox" 등).
         auto_cookies: 봇 차단 시 설치된 브라우저 쿠키를 자동으로 시도(기본 True).
+        progress_cb: 다운로드 진행 중 dict로 호출 —
+            {"downloaded": 받은바이트, "total": 전체바이트, "speed": Bps, "eta": 초,
+             "filename": 파일명, "status": "downloading"|"finished"}.
+            "진짜 받고 있는지 / 뭘 받았는지"를 화면에 보여주기 위함.
     Returns:
         (오디오 파일 경로, 영상 제목)
     Raises:
@@ -67,12 +72,28 @@ def download_audio(
     output_dir.mkdir(parents=True, exist_ok=True)
     outtmpl = str(output_dir / f"{video_id}.%(ext)s")
 
+    def _hook(d: dict) -> None:
+        if not progress_cb:
+            return
+        try:
+            progress_cb({
+                "status": d.get("status"),
+                "downloaded": d.get("downloaded_bytes") or 0,
+                "total": d.get("total_bytes") or d.get("total_bytes_estimate") or 0,
+                "speed": d.get("speed") or 0,
+                "eta": d.get("eta") or 0,
+                "filename": Path(d.get("filename", "")).name,
+            })
+        except Exception:
+            pass  # 진행표시는 부가기능 — 절대 다운로드를 막지 않는다
+
     base_opts = {
         "format": "bestaudio/best",
         "outtmpl": outtmpl,
         "noplaylist": True,
         "quiet": True,
         "no_warnings": True,
+        "progress_hooks": [_hook],
     }
 
     # 시도 순서: (지정 쿠키 or 쿠키없음) → 봇 차단이면 자동 브라우저 순회

@@ -127,43 +127,66 @@ def http_post_status(path: str, body: dict) -> int:
         return e.code
 
 
-def open_browser(url: str) -> bool:
-    """브라우저를 자동으로 연다. 방법을 순서대로 모두 시도(하나라도 되면 True).
-    사용자가 직접 주소를 열 필요가 없게 — 비개발자 대상 핵심 편의."""
-    # 1) Windows: os.startfile 이 가장 확실 (기본 브라우저로 URL 오픈)
+def open_browser(url: str) -> str:
+    """브라우저를 자동으로 연다. 정책:
+      - 기본 브라우저가 되면 그걸로 연다(사용자 선택 존중).
+      - 기본이 안 되면 되는 것(크롬 등)만 열어준다.
+    무엇으로 열었는지 라벨을 돌려준다(안내용). 실패 시 빈 문자열.
+    """
+    # 1) Windows: 기본 브라우저 우선 (os.startfile → explorer → start)
     if IS_WIN:
         try:
             os.startfile(url)  # type: ignore[attr-defined]
             log(f"BROWSER os.startfile ok: {url}")
-            return True
+            return "기본 브라우저"
         except Exception as e:  # noqa: BLE001
             log(f"BROWSER os.startfile fail: {e}")
         for cmd in (["explorer", url], ["cmd", "/c", "start", "", url]):
             try:
                 subprocess.Popen(cmd)
                 log(f"BROWSER {cmd[0]} ok: {url}")
-                return True
+                return "기본 브라우저"
             except Exception as e:  # noqa: BLE001
                 log(f"BROWSER {cmd[0]} fail: {e}")
+        # 기본이 안 되면 '센스' 폴백: 되는 것(크롬)만 열어준다
+        chrome_candidates = [
+            os.path.expandvars(r"%ProgramFiles%\Google\Chrome\Application\chrome.exe"),
+            os.path.expandvars(r"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe"),
+            os.path.expandvars(r"%LocalAppData%\Google\Chrome\Application\chrome.exe"),
+        ]
+        for exe in chrome_candidates:
+            if os.path.exists(exe):
+                try:
+                    subprocess.Popen([exe, url])
+                    log(f"BROWSER chrome ok: {exe}")
+                    return "크롬"
+                except Exception as e:  # noqa: BLE001
+                    log(f"BROWSER chrome fail: {e}")
+        try:  # PATH에 등록된 chrome 이름으로 마지막 시도
+            subprocess.Popen(["cmd", "/c", "start", "chrome", url])
+            log("BROWSER start chrome ok")
+            return "크롬"
+        except Exception as e:  # noqa: BLE001
+            log(f"BROWSER start chrome fail: {e}")
     else:
-        # macOS: open / Linux: xdg-open
+        # macOS: open / Linux: xdg-open (기본 브라우저)
         for cmd in (["open", url], ["xdg-open", url]):
             if shutil.which(cmd[0]):
                 try:
                     subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     log(f"BROWSER {cmd[0]} ok: {url}")
-                    return True
+                    return "기본 브라우저"
                 except Exception as e:  # noqa: BLE001
                     log(f"BROWSER {cmd[0]} fail: {e}")
-    # 3) 마지막: 파이썬 표준 webbrowser
+    # 3) 마지막: 파이썬 표준 webbrowser (되는 브라우저)
     try:
         import webbrowser
         if webbrowser.open(url):
             log(f"BROWSER webbrowser ok: {url}")
-            return True
+            return "브라우저"
     except Exception as e:  # noqa: BLE001
         log(f"BROWSER webbrowser fail: {e}")
-    return False
+    return ""
 
 
 def write_results(status: str, evidence: str, rollback: str, next_purpose: str) -> None:
@@ -294,12 +317,12 @@ def main() -> int:
         return 0
 
     url = f"http://127.0.0.1:{PORT}"
-    info(f"설치·검증 완료 ✅  브라우저를 자동으로 엽니다... (종료하려면 이 창에서 Ctrl+C)")
+    info("설치·검증 완료 ✅  브라우저를 자동으로 엽니다... (종료하려면 이 창에서 Ctrl+C)")
     opened = open_browser(url)
     if opened:
-        info(f"브라우저가 열렸습니다. 안 보이면 주소창에 {url} 을 입력하세요.")
+        info(f"{opened}에서 자막 변환기를 열었습니다. 안 보이면 주소창에 {url} 을 입력하세요.")
     else:
-        warn(f"브라우저 자동열기에 실패했습니다. 아래 주소를 복사해 브라우저에 붙여넣으세요:")
+        warn("브라우저 자동열기에 실패했습니다. 아래 주소를 복사해 브라우저에 붙여넣으세요:")
         print(f"    {url}")
     try:
         _server.wait()

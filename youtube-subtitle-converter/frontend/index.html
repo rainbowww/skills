@@ -32,11 +32,19 @@
     <p id="error-box" class="error" role="alert" hidden></p>
   </section>
 
-  <!-- 항목 8: 로딩 오버레이 -->
+  <!-- 항목 8: 로딩 오버레이 (실시간 진행률) -->
   <div id="loading" class="loading-overlay" role="status" aria-live="polite" hidden>
     <div class="spinner" aria-hidden="true"></div>
-    <p>대학생과 직장인의 소중한 시간을 절약하기 위해<br>목소리를 자막으로 변환하고 있어요</p>
-    <p class="loading-sub">영상 길이에 따라 수 분 걸릴 수 있어요</p>
+    <p class="loading-stage" id="loading-stage">변환을 시작합니다</p>
+
+    <div class="progress-wrap" aria-hidden="true">
+      <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+    </div>
+    <p class="progress-pct" id="progress-pct">0%</p>
+
+    <p class="loading-detail" id="loading-detail">잠시만요…</p>
+    <p class="loading-sub" id="loading-elapsed">경과 0초 · 영상 길이에 따라 수 분 걸릴 수 있어요</p>
+    <button type="button" id="cancel-btn" class="btn-cancel">취소</button>
   </div>
 
   <!-- 항목 6: 미리보기 + 항목 9: 검색 + 항목 7: 저장 -->

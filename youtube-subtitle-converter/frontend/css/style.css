@@ -99,6 +99,25 @@ body {
 .loading-sub { color: var(--text-secondary); font-size: 0.88rem; margin-top: 0.5rem; }
 @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.5s; } }
 
+/* 실시간 진행률 표시 (단계 + 진행바 + % + 상세 + 경과) */
+.loading-stage { font-size: 1.12rem; font-weight: 700; margin-bottom: 0.9rem; }
+.progress-wrap {
+  width: min(420px, 82vw); height: 14px; background: #E3E3DE;
+  border-radius: 7px; overflow: hidden;
+}
+.progress-bar {
+  height: 100%; width: 0; background: var(--greenery);
+  border-radius: 7px; transition: width 0.4s ease;
+}
+.progress-pct { font-size: 1.05rem; font-weight: 700; color: var(--greenery-dark); margin-top: 0.5rem; }
+.loading-detail { color: var(--text-primary); font-size: 0.95rem; margin-top: 0.6rem; word-break: keep-all; }
+.btn-cancel {
+  margin-top: 1.4rem; background: transparent; color: var(--text-secondary);
+  border: 1px solid #CFCFC9; border-radius: var(--radius);
+  padding: 0.5rem 1.4rem; font-size: 0.9rem; cursor: pointer;
+}
+.btn-cancel:hover { border-color: var(--error); color: var(--error); }
+
 /* 항목 6: 결과 카드 — 그리너리 테두리 미리보기 */
 .result-card {
   background: #FFFFFF; border-radius: var(--radius);
