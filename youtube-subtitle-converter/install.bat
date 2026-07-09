@@ -1,11 +1,11 @@
 @echo off
 chcp 65001 >nul
-REM Target: Windows (double-click or cmd). No PowerShell / no WSL.
-REM Thin entry point only. This file is ASCII-only ON PURPOSE:
-REM   Korean text inside a .bat breaks on Korean Windows (CP949) and gets
-REM   mis-parsed as commands. All Korean user messages live in oneshot.py
-REM   (Python prints Unicode safely). This launcher just: check curl ->
-REM   ensure Python (winget) -> download oneshot.py -> run it.
+REM Target: Windows - works from double-click, cmd, OR PowerShell (.\install.bat).
+REM ONE launcher for every Windows version (no separate .ps1). ASCII-only on
+REM purpose: Korean text inside a .bat breaks on Korean Windows (CP949).
+REM This file does ONLY the prerequisite ("contact point"): make sure Python
+REM exists, then download oneshot.py. Everything after - install, verify, run,
+REM and all Korean messages - is managed by Python (oneshot.py).
 setlocal EnableExtensions EnableDelayedExpansion
 set "DEST=%USERPROFILE%\youtube-subtitle-converter"
 set "RAW=https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/youtube-subtitle-converter"
@@ -14,77 +14,59 @@ echo ============================================================
 echo   Subtitle Converter - one-shot installer (Windows)
 echo ============================================================
 
-REM ---- [1] curl (built into Windows 10 1803+) ----
-where curl >nul 2>nul
-if errorlevel 1 (
-  echo [ERROR] curl not found. Update to Windows 10+ , or download this file
-  echo         with a browser from:
-  echo         %RAW%/install.bat
-  echo.
-  pause
-  exit /b 1
-)
-
-REM ---- [2] Python present? if not, auto-install via winget ----
+REM ---- [1] ensure Python (the contact point). missing -> winget, else guide ----
 set "PYCMD="
 where python >nul 2>nul && set "PYCMD=python"
 if not defined PYCMD ( where py >nul 2>nul && set "PYCMD=py" )
-
 if not defined PYCMD (
   echo [..] Python not found. Trying auto-install via winget ...
-  where winget >nul 2>nul
-  if errorlevel 1 (
-    echo [INFO] winget is not available on this PC.
-    echo        Install Python from https://www.python.org/downloads/
-    echo        IMPORTANT: tick "Add python.exe to PATH" on the first screen,
-    echo        then double-click this file again.
-    echo.
-    pause
-    exit /b 1
+  where winget >nul 2>nul && (
+    winget install -e --id Python.Python.3.12 --accept-source-agreements --accept-package-agreements --silent
+    where python >nul 2>nul && set "PYCMD=python"
+    if not defined PYCMD ( where py >nul 2>nul && set "PYCMD=py" )
   )
-  winget install -e --id Python.Python.3.12 --accept-source-agreements --accept-package-agreements --silent
-  where python >nul 2>nul && set "PYCMD=python"
-  if not defined PYCMD ( where py >nul 2>nul && set "PYCMD=py" )
-  if not defined PYCMD (
-    echo.
-    echo [DONE] Python installed. Please double-click install.bat ONE more time
-    echo        so the new PATH is picked up. It will continue automatically.
-    echo.
-    pause
-    exit /b 0
-  )
+)
+if not defined PYCMD (
+  echo [INFO] Could not set up Python automatically on this Windows version.
+  echo        Install Python from https://www.python.org/downloads/
+  echo        IMPORTANT: tick "Add python.exe to PATH" on the first screen,
+  echo        then run this file again. It will continue automatically.
+  echo.
+  pause
+  exit /b 1
 )
 echo [OK] Python found (%PYCMD%).
 
 if not exist "%DEST%" mkdir "%DEST%"
 
-REM ---- [3] download shared engine (retry included) ----
+REM ---- [2] download shared engine oneshot.py (compatible with old + new) ----
+REM   new Windows (10 1803+): curl. old Windows (no curl): PowerShell + TLS 1.2
+REM   (GitHub requires TLS 1.2; old .NET defaults to TLS 1.0 and would fail).
 echo [..] Downloading install engine (oneshot.py) ...
-curl -fsSL --retry 4 --retry-delay 2 "%RAW%/oneshot.py" -o "%DEST%\oneshot.py"
-if errorlevel 1 (
-  echo [ERROR] Failed to download oneshot.py. Check your internet connection.
-  echo.
-  pause
-  exit /b 1
-)
+set "ENGINE=%DEST%\oneshot.py"
+if exist "%ENGINE%" del /q "%ENGINE%" >nul 2>nul
+where curl >nul 2>nul && curl -fsSL --retry 4 --retry-delay 2 "%RAW%/oneshot.py" -o "%ENGINE%"
+if not exist "%ENGINE%" powershell -NoProfile -ExecutionPolicy Bypass -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%RAW%/oneshot.py' -OutFile '%ENGINE%'" 2>nul
 
-REM ---- check-then-run: verify file EXISTS and is non-empty BEFORE executing ----
-if not exist "%DEST%\oneshot.py" (
-  echo [ERROR] oneshot.py was not saved. Not running.
+REM ---- check-then-run: verify the file EXISTS and is non-empty BEFORE running ----
+if not exist "%ENGINE%" (
+  echo [ERROR] Failed to download oneshot.py. Check your internet connection,
+  echo         or download this file with a browser and run it again:
+  echo         %RAW%/install.bat
   echo.
   pause
   exit /b 1
 )
-for %%A in ("%DEST%\oneshot.py") do if %%~zA LSS 100 (
+for %%A in ("%ENGINE%") do if %%~zA LSS 100 (
   echo [ERROR] oneshot.py is incomplete (%%~zA bytes). Not running.
   echo.
   pause
   exit /b 1
 )
 
-REM ---- [4] run shared engine: survey / deps install / verify / results ----
+REM ---- [3] hand off to Python. Python manages everything from here on. ----
 REM (This is where Korean progress messages appear - printed by Python.)
-%PYCMD% "%DEST%\oneshot.py"
+%PYCMD% "%ENGINE%"
 set "RC=%errorlevel%"
 
 echo.
