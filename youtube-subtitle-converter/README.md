@@ -4,7 +4,34 @@
 듣지 못하는 학생·직장인을 위한 시각 자막 서비스를 목표로 만들었어요.
 
 - 연그레이 배경 + 그리너리 포인트의 심플·미니멀 화면
-- 타임스탬프 켜기/끄기, 결과 미리보기, `.txt` 저장, 키워드 검색·자동 스크롤, 글자 크기 조절, 모바일 반응형
+- 타임스탬프 켜기/끄기, 결과 미리보기, `.txt` 저장, 키워드 검색·자동 스크롤, 실시간 진행률, 글자 크기 조절, 모바일 반응형 + PWA
+
+---
+
+## ⚡ 바로 설치 — 내 환경 골라 그대로 복붙
+
+> 맨 앞 `#`(PowerShell) / `REM`(cmd) 줄은 **설명(주석)**이라 같이 붙여넣어도 에러 없이 넘어갑니다.
+> 파이썬이 없으면 자동 설치를 안내하고, 끝나면 **브라우저가 자동으로 열립니다.**
+
+**🟦 Windows — PowerShell (파란 창 `PS C:\>`)**
+```powershell
+# 대상: Windows PowerShell — 아래 한 줄만 진짜 명령. 이 #줄은 설명이라 안전.
+irm https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/youtube-subtitle-converter/install.ps1 | iex
+```
+
+**🟦 Windows — 명령 프롬프트 cmd (검은 창 `C:\>`)**
+```bat
+REM 대상: Windows cmd — 받은 뒤 파일이 있으면에만 실행(검사 후 실행)
+curl -fL -o "%TEMP%\ysc-install.bat" "https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/youtube-subtitle-converter/install.bat" && if exist "%TEMP%\ysc-install.bat" call "%TEMP%\ysc-install.bat"
+```
+
+**🍏 macOS · 🟩 Linux · WSL — 터미널**
+```bash
+# 대상: Linux·macOS 터미널(WSL 포함) — bash
+curl -sSL https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/youtube-subtitle-converter/install.sh | bash
+```
+
+타이핑이 싫으면 → 아래 **가장 쉬운 길(더블클릭)** 로 가세요. 폰은 → **📱 폰에서 쓰기** 참고.
 
 ---
 
