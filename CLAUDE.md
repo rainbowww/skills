@@ -178,20 +178,52 @@ The repository owner has set these standing rules for every session in this repo
    anything outside the working folder.
 5. **Keep answers short and lead with the outcome.** Minimize back-and-forth;
    don't ask a follow-up question when a reasonable default exists.
-6. **Label every runnable command block with its execution target.** First
-   comment line must state where it runs: 🟦 Windows PowerShell / 🟩
-   Linux·macOS terminal bash (including WSL) / ☁️ cloud auto-run (not run by
-   a human). A command without its execution target is incomplete.
-   *Why: pasting a command into the wrong window is a disaster vector —
-   PowerShell syntax dies (or silently misbehaves) in bash and vice versa,
-   and a cloud auto-run script executed by hand configures the wrong
-   machine. Linux↔macOS are mutually safe (both bash), hence one label.*
+6. **Label every runnable command block with its execution target — and the
+   label MUST be a real comment, not plain text.** First line states where it
+   runs, prefixed with that shell's comment token so pasting the label never
+   executes: `#` for 🟩 bash / 🟦 PowerShell, `REM` for 🟦 cmd/`.bat`, `::` also
+   works in cmd. Targets: 🟦 Windows PowerShell / 🟦 Windows cmd / 🟩 Linux·macOS
+   bash (incl. WSL) / ☁️ cloud auto-run. A command without a *commented*
+   execution-target line is incomplete.
+   *Why: pasting into the wrong window is a disaster vector — PowerShell syntax
+   dies in bash and vice versa, `&&` is a syntax error in old PowerShell, `curl`
+   is an alias for Invoke-WebRequest in PowerShell (use `curl.exe`), `wget`
+   doesn't exist in cmd. And a bare label line like `대상: ...` pasted with the
+   command runs as a command → red "not recognized" error that scares first-time
+   users. Session evidence: a student pasted the label and got a wall of red.*
 7. **Test by actually executing — never hand off verification.** "Written but
    needs testing on your machine" is unfinished work in disguise. Exhaust every
    way to run the real thing here first (install the runtime in the sandbox,
    hit the real network, simulate a fresh machine). Session evidence: pushing
    for real execution caught 3 shipped-code bugs that "test it on site" would
    have dumped on the user.
+8. **Installers/launchers must be ASCII-only, thin, and check-then-run.** This
+   is not decoration — it is the user's #1 recurring pain, and the whole reason
+   these skills exist. Rules for any `.bat`/`.ps1`/`.sh` entry point:
+   - **Pure ASCII (no Korean, no emoji) in the launcher itself.** Korean bytes
+     in a `.bat` are UTF-8; Korean Windows `cmd` reads files in codepage 949, so
+     the bytes get mis-decoded and split into bogus tokens `cmd` tries to run
+     (real failure this session: `'shot.py"'`, `吏꾩엯` mojibake, a wall of red).
+     Windows PowerShell 5.1 likewise reads a saved `.ps1` as ANSI/CP949 without a
+     BOM. Put ALL localized (Korean) user text in the program layer (Python
+     prints Unicode safely via the console API regardless of `chcp`); keep the
+     launcher's job to: ensure runtime → download engine → verify → run.
+   - **Check-then-run.** Before executing a downloaded file, verify it EXISTS and
+     is non-empty (`if not exist`/`Test-Path` + size ≥ 100 bytes). `curl … && run`
+     only checks curl's exit code, not the file — a student would never run a
+     file without confirming it's there; neither do we.
+   - **Prerequisite = check, then install if missing, then pass.** "installed?
+     → yes: skip (pass); no: install then continue." Idempotent, re-runnable.
+   - **After install, SHOW the result** (open the browser / print PASS + paths).
+     Assume the user is NOT a developer: minimal download, the rest by guidance.
+9. **Sandbox success ≠ platform success — prove it, don't believe it.** This
+   Linux/UTF-8 sandbox cannot run Windows `cmd`/PowerShell 5.1 or its CP949
+   codepage, so "it passed in my sandbox" does NOT cover the Windows path. When
+   you cannot run the real target, prove the property with real code instead of
+   asserting it: e.g. decode the launcher bytes under `cp949`/`cp437`/`utf-8` and
+   assert they're identical (ASCII ⇒ codepage-invariant), and reproduce the old
+   bug (UTF-8 intent ≠ CP949 read) so the fix is demonstrated, not claimed. Say
+   plainly what is PROVEN vs INFERRED (per the automation constitution).
 
 ## Git workflow (for this task/session)
 

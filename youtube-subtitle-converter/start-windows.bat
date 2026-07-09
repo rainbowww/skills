@@ -1,9 +1,8 @@
 @echo off
 chcp 65001 >nul
 REM Target: Windows - double-click this file in Explorer (no PowerShell needed).
-REM Same as start-windows.bat. ASCII-only content (Korean filename is fine for
-REM double-click; Korean INSIDE a .bat breaks on Korean Windows CP949).
-REM First run creates a venv + installs deps (a few min); then starts the app.
+REM ASCII-only launcher. First run creates a venv and installs deps (a few min);
+REM after that it just starts the web app. Korean messages come from Python.
 cd /d "%~dp0"
 
 where python >nul 2>nul
@@ -23,6 +22,7 @@ if not exist ".venv\Scripts\python.exe" (
   .venv\Scripts\python -m pip install --quiet -r requirements.txt
 )
 
+REM check-then-run: only launch if the app entry file exists
 if not exist "app.py" (
   echo [ERROR] app.py not found in this folder. Re-download the package.
   pause
