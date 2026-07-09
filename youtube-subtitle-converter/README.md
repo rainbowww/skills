@@ -98,9 +98,21 @@ curl -sSL https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-do
 
 ---
 
-## 📱 폰(안드로이드 · 아이폰)에서 쓰기 — 앱처럼
+## 📱 폰(안드로이드 · 아이폰)에서 쓰기
 
-폰에는 **아무것도 설치 안 해도** 됩니다. 자막 변환(음성 인식)은 PC가 하고,
+### 🤖 안드로이드 — 앱 설치 (APK, PC 불필요 목표)
+폰에 직접 설치하는 **독립 앱**입니다. QR 스캔 한 번 또는 아래 링크로 받으세요:
+
+<img src="android/apk-qr.png" alt="APK 다운로드 QR" width="200">
+
+**https://github.com/rainbowww/skills/releases/download/android-latest/subtitle-converter.apk**
+
+QR 스캔(또는 링크) → 다운로드 → 탭해서 설치 → "이 출처 허용" 한 번.
+자세한 건 [`android/README.md`](android/README.md). (현재 1단계: 설치·화면·주소 인식 /
+다음 단계에서 폰 온디바이스 음성 인식 추가)
+
+### 🌐 아이폰·그 외 — 브라우저로 (PC 필요)
+아래 방식은 폰에 아무것도 설치 안 해도 됩니다. 자막 변환(음성 인식)은 PC가 하고,
 폰은 같은 와이파이로 **화면만** 봅니다. 안드로이드·아이폰 브라우저 모두 지원합니다.
 
 **1단계 — PC를 폰 접속 모드로 켜기** (같은 와이파이의 폰이 접속 가능하게):

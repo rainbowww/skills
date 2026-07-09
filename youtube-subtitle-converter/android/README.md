@@ -3,17 +3,30 @@
 **폰만으로 동작하는 진짜 설치형 앱**을 목표로 합니다. PWA(홈 화면 추가)와 달리
 PC가 필요 없습니다. 유튜브 오디오 추출 + 한국어 음성 인식을 **폰 안에서** 합니다.
 
-## 어디서 내려받나요? (APK 파일)
+## 📥 폰으로 받기 — QR 스캔 한 번
 
-이 저장소는 안드로이드 SDK가 없어 여기서는 APK를 못 만듭니다. 대신 **GitHub
-Actions가 APK를 빌드**합니다(러너에 SDK 내장).
+<img src="apk-qr.png" alt="APK 다운로드 QR" width="220">
 
-- **최신 빌드 내려받기:** 저장소 **Actions → “Android APK (subtitle converter)”**
-  → 최근 실행 → 아래 **Artifacts**의 `subtitle-converter-apk` 를 내려받아 압축을
-  풀면 `subtitle-converter.apk` 가 나옵니다.
-- **릴리스로 받기:** `v*` 태그를 밀면 Releases에 `.apk` 가 첨부됩니다(폰에서 바로 클릭 설치).
+**폰 카메라로 위 QR을 비추면** APK 다운로드가 바로 시작됩니다.
+또는 폰 브라우저에서 이 주소를 여세요:
 
-설치 시 “알 수 없는 출처(출처를 알 수 없는 앱) 허용”을 한 번 켜야 할 수 있어요.
+**https://github.com/rainbowww/skills/releases/download/android-latest/subtitle-converter.apk**
+
+### 설치 3단계 (개발자 아니어도 됩니다)
+1. QR 스캔(또는 위 링크) → `subtitle-converter.apk` 다운로드
+2. 다운로드 알림을 **탭 → 설치**
+3. "이 출처의 앱 허용" 창이 뜨면 **허용** 한 번 → 홈 화면에 **자막 변환기** 아이콘 생김
+
+> 항상 **최신 빌드**가 같은 링크로 자동 갱신됩니다(`android-latest` 릴리스).
+> 로그인·압축해제 필요 없이 바로 클릭 설치돼요.
+
+<details>
+<summary>다른 방법: Actions 아티팩트 / 태그 릴리스</summary>
+
+- **Actions 아티팩트:** 저장소 Actions → “Android APK (subtitle converter)” → 최근 실행 →
+  Artifacts의 `subtitle-converter-apk` (GitHub 로그인 필요, zip 압축 해제).
+- **버전 릴리스:** `v*` 태그를 밀면 그 버전 Releases에도 `.apk` 가 첨부됩니다.
+</details>
 
 ## 개발 단계 (한 번 만들면 계속 개선)
 
