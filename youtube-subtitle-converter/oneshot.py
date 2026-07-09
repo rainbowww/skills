@@ -26,7 +26,7 @@ TOTAL = 6
 APP_FILES = [
     "app.py", "cli.py", "requirements.txt",
     "backend/__init__.py", "backend/routes.py", "backend/youtube_parser.py",
-    "backend/transcriber.py", "backend/formatter.py",
+    "backend/transcriber.py", "backend/formatter.py", "backend/captions.py",
     "frontend/index.html", "frontend/css/style.css", "frontend/js/app.js",
     # PWA(안드로이드/아이폰 설치형 앱) 껍데기
     "frontend/manifest.webmanifest", "frontend/sw.js",
