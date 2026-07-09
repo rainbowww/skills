@@ -27,5 +27,6 @@ A(회사) / B(자택) / C(학교), OS(Windows/macOS/Linux) 무관하게 **동일
 | 환경 | export 스크립트 | 상태 |
 |---|---|---|
 | Linux (샌드박스) | `export.sh` | ✅ 테스트 통과 (2026-07-09) |
-| macOS | `export.sh` | ⬜ bash 동일 — 현장 확인 필요 |
-| Windows | `export.ps1` | ⬜ 작성 완료 — 현장 첫 실행 테스트 필요 |
+| PowerShell 7.6.3 (샌드박스, 실제 실행) | `export.ps1` | ✅ 테스트 통과 (2026-07-09) — 경로를 Join-Path로 교체해 전 OS 호환 |
+| macOS | `export.sh` | ⬜ bash 동일 — 현장 확인 시 ✅ 예상 |
+| Windows PowerShell 5.1 (구버전 내장) | `export.ps1` | ⬜ 사용 명령어 전부 5.1 지원 — 현장 확인 시 ✅ 예상. 공용 PC는 `-ExecutionPolicy Bypass` 필요 |
