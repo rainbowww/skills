@@ -4,13 +4,16 @@ A(회사) / B(자택) / C(학교), OS(Windows/macOS/Linux) 무관하게 **동일
 
 ## ⚡ 원샷 설치 (이 한 줄이면 끝 — 최신 버전 자동 다운로드 + 설치 + 파일 열기)
 
-**Windows** — PowerShell 열고 붙여넣기:
+> **실행 위치 표기 규칙**: 이 문서의 모든 명령 블록은 첫 줄 주석에 `대상(실행 위치)`를 명시한다.
+> 🟦 Windows PowerShell(윈도우 PC) / 🟩 리눅스·macOS 터미널 bash(**WSL 포함**) / ☁️ claude.ai 클라우드 리눅스(자동 실행, 사람이 실행 안 함)
+
 ```powershell
+# 대상(실행 위치): 🟦 Windows PowerShell — 윈도우 PC에서 사람이 직접 실행 (WSL 아님)
 irm https://raw.githubusercontent.com/rainbowww/skills/main/portable-ai-setup/install.ps1 | iex
 ```
 
-**macOS / Linux** — 터미널 열고 붙여넣기:
 ```bash
+# 대상(실행 위치): 🟩 리눅스/macOS 터미널 또는 윈도우 WSL — bash에서 사람이 직접 실행
 curl -sSL https://raw.githubusercontent.com/rainbowww/skills/main/portable-ai-setup/install.sh | bash
 ```
 
@@ -38,7 +41,9 @@ claude.ai/code → 환경 설정 → **"설정 스크립트"** 칸에 아래를 
 ```bash
 #!/bin/bash
 # 설명: portable-ai-setup 원샷 자동설치 — 세션 시작 시 GitHub 최신판을 ~/portable-ai-setup_Ver{N}에 설치하고 Claude Code 반자동(acceptEdits) 설정을 준비
-# 대상: claude.ai/code 클라우드 환경의 "설정 스크립트" 칸 (A회사/B자택/C학교 어디서든 동일 적용)
+# 대상(실행 위치): ☁️ claude.ai/code 클라우드 리눅스 컨테이너 — 사람이 직접 실행하지 않음.
+#                 "설정 스크립트" 칸에 저장만 하면 새 세션마다 자동 실행 (A회사/B자택/C학교 동일 적용).
+#                 윈도우 PowerShell/WSL에서 실행하는 스크립트 아님 — PC용은 install.ps1/install.sh 참조
 # 동작: main 브랜치 우선, 없으면 작업 브랜치로 대체. 실패해도 세션 시작은 막지 않음
 { curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors https://raw.githubusercontent.com/rainbowww/skills/main/portable-ai-setup/install.sh \
   || curl -fsSL --retry 4 --retry-delay 3 --retry-all-errors https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/portable-ai-setup/install.sh; } | bash \
@@ -69,6 +74,7 @@ claude.ai/code → 환경 설정 → **"설정 스크립트"** 칸에 아래를 
 | Ver8 | 2026-07-09 | 복붙 전용 파일 `prompts/PASTE-claude-ai.txt` 추가 — 내용 전체가 붙여넣을 것(Ctrl+A→Ctrl+C, 고를 필요 없음). 설치기가 이 파일을 자동으로 엶 |
 | Ver9 | 2026-07-09 | 버전 확인 단계에도 재시도 추가(429 대비 — 실테스트로 발견). claude.ai/code 클라우드 환경용 설정 스크립트 문서화 |
 | Ver10 | 2026-07-09 | 설정 스크립트 주석 표준화: 설명/대상/동작 라벨 구조 |
+| Ver11 | 2026-07-09 | 실행 위치 표기 규칙 판박기: 모든 명령 블록 첫 줄에 대상(🟦 PowerShell / 🟩 bash·WSL / ☁️ 클라우드 자동실행) 명시 — 지침 파일·README·CLAUDE.md 반영 |
 
 ## 갱신 규칙
 
