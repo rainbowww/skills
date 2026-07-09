@@ -1,0 +1,63 @@
+name: Android APK (subtitle converter)
+
+# 이 리눅스 샌드박스는 안드로이드 SDK가 없고 dl.google.com이 막혀 있어 APK를 못 만든다.
+# 대신 GitHub 러너(안드로이드 SDK 내장)가 APK를 빌드해 다운로드용 아티팩트로 올린다.
+# 태그를 밀면(v로 시작) 릴리스에 .apk를 첨부 → 폰으로 바로 내려받아 설치.
+
+on:
+  push:
+    branches: [ "claude/claude-md-docs-8r1kk7" ]
+    paths:
+      - "youtube-subtitle-converter/android/**"
+      - ".github/workflows/android-apk.yml"
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: youtube-subtitle-converter/android
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Build debug APK
+        run: gradle :app:assembleDebug --stacktrace --no-daemon
+
+      - name: Rename APK
+        run: |
+          mkdir -p out
+          cp app/build/outputs/apk/debug/app-debug.apk out/subtitle-converter.apk
+          ls -la out
+
+      - name: Upload APK artifact (누구나 Actions에서 내려받기)
+        uses: actions/upload-artifact@v4
+        with:
+          name: subtitle-converter-apk
+          path: youtube-subtitle-converter/android/out/subtitle-converter.apk
+          if-no-files-found: error
+
+      - name: Attach APK to Release (태그 push 시)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: youtube-subtitle-converter/android/out/subtitle-converter.apk

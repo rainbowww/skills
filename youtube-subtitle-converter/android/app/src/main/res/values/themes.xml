@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.SubtitleConverter" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/greenery</item>
+        <item name="colorPrimaryDark">@color/greenery_dark</item>
+        <item name="android:statusBarColor">@color/greenery</item>
+        <item name="android:windowBackground">@color/bg</item>
+    </style>
+</resources>

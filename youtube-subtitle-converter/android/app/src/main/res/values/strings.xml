@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">자막 변환기</string>
+    <string name="tagline">유튜브 목소리를 한글 자막으로 — 듣는 대신, 읽으세요.</string>
+    <string name="url_hint">유튜브 영상 주소를 붙여넣으세요</string>
+    <string name="convert">자막 변환하기</string>
+    <string name="status_ready">주소를 넣고 버튼을 누르세요.</string>
+</resources>

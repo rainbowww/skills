@@ -1,0 +1,8 @@
+<resources>
+    <color name="greenery">#FF88B04B</color>
+    <color name="greenery_dark">#FF6F9A3B</color>
+    <color name="bg">#FFF5F5F3</color>
+    <color name="text_primary">#FF333333</color>
+    <color name="text_secondary">#FF777777</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>
