@@ -28,6 +28,10 @@ APP_FILES = [
     "backend/__init__.py", "backend/routes.py", "backend/youtube_parser.py",
     "backend/transcriber.py", "backend/formatter.py",
     "frontend/index.html", "frontend/css/style.css", "frontend/js/app.js",
+    # PWA(안드로이드/아이폰 설치형 앱) 껍데기
+    "frontend/manifest.webmanifest", "frontend/sw.js",
+    "frontend/icons/icon-192.png", "frontend/icons/icon-512.png",
+    "frontend/icons/apple-touch-icon.png",
 ]
 
 DEST = Path.home() / "youtube-subtitle-converter"
