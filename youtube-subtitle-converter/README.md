@@ -35,12 +35,18 @@
 > 이미 설치돼 있으면 그 단계는 **건너뛰고(pass)** 바로 다음으로 갑니다.
 
 <details>
-<summary>명령창을 쓰는 게 편하다면 (선택)</summary>
+<summary>명령창을 쓰는 게 편하다면 (선택) — PowerShell·cmd 둘 다 됨</summary>
 
-```bat
-REM 대상(실행 위치): 🟦 Windows — cmd(명령 프롬프트). PowerShell 아님
-curl -L -o "%USERPROFILE%\Downloads\install.bat" "https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/youtube-subtitle-converter/install.bat" && "%USERPROFILE%\Downloads\install.bat"
+아래 **두 줄**을 **한 줄씩** 붙여넣고 Enter 하세요. **PowerShell·명령 프롬프트(cmd) 어느 창이든 똑같이** 됩니다.
+(⚠️ 두 줄을 한꺼번에 붙이지 말 것)
+
+```text
+대상(실행 위치): 🟦 Windows — PowerShell 또는 cmd 공용. 한 줄씩 Enter.
+curl.exe -L -o install.bat https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/youtube-subtitle-converter/install.bat
+.\install.bat
 ```
+
+호환 비결: `curl.exe`(PowerShell의 curl 별명 회피) + `.\install.bat`(두 창 공용 실행) + `&&` 안 씀(PowerShell 토큰 에러 차단).
 </details>
 
 ---
