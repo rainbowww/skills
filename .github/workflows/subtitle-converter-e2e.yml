@@ -87,9 +87,10 @@ jobs:
       - name: "[4] 웹앱 기동 + API·PWA·진행률 스모크"
         run: |
           python app.py & sleep 4
-          # 기본 화면 + 진행바 UI
-          curl -sf http://127.0.0.1:5123/ | grep -q "자막 변환기"
-          curl -sf http://127.0.0.1:5123/ | grep -q "progress-bar"
+          # 대문(/)은 소개 페이지 '보이는 소리', 도구(/app)에 진행바 UI가 있다
+          curl -sf http://127.0.0.1:5123/ | grep -q "보이는 소리"
+          curl -sf http://127.0.0.1:5123/app | grep -q "자막 변환기"
+          curl -sf http://127.0.0.1:5123/app | grep -q "progress-bar"
           curl -sf http://127.0.0.1:5123/css/style.css > /dev/null
           # PWA(안드로이드/아이폰 설치형) 자산
           curl -sf http://127.0.0.1:5123/manifest.webmanifest | grep -q "standalone"
