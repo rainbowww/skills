@@ -239,6 +239,18 @@ The repository owner has set these standing rules for every session in this repo
    assert they're identical (ASCII ⇒ codepage-invariant), and reproduce the old
    bug (UTF-8 intent ≠ CP949 read) so the fix is demonstrated, not claimed. Say
    plainly what is PROVEN vs INFERRED (per the automation constitution).
+10. **Ship in this order — a dead link loses the person for good.** When you hand
+    someone a link to download or install something: (1) **upload the file first**
+    so it actually exists at the URL; (2) **upload the manual/guide** next; (3)
+    **actually download it yourself and test it, THEN conclude** — never announce
+    a link you haven't fetched. Session evidence: `curl` the real URL (expect HTTP
+    200 + right size/signature), fetch the manual's raw URL and grep it for the
+    address. *Why: if even one person follows a link and finds nothing, they
+    don't come back — you lose them.* And **always give the full `https://…`
+    link, never a bare `github.com/…`** — a scheme-less link is read as a relative
+    path and 404s (real failure this session). Pair every download with a plain,
+    non-technical manual (the one reliable full link + short domains + install
+    steps + a "if you see 404, the https:// was dropped" troubleshooting line).
 
 ## Git workflow (for this task/session)
 
