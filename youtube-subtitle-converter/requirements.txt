@@ -1,0 +1,6 @@
+# 핵심 엔진
+faster-whisper>=1.0.0       # AI 음성→텍스트 (Whisper + CTranslate2, PyAV 내장이라 ffmpeg 불필요)
+yt-dlp>=2024.1.0            # YouTube 오디오 추출
+
+# 웹앱 (A 형태)
+Flask>=3.0.0

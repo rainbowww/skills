@@ -1,0 +1,81 @@
+# 대상(실행 위치): ☁️ GitHub Actions (우분투 러너) — 푸시 시 자동 실행, 사람이 실행 안 함
+# 설명: youtube-subtitle-converter 실전 검증 — 단위테스트 + 한국어 음성인식 엔진 + 진짜 유튜브 E2E
+name: subtitle-converter-e2e
+
+on:
+  push:
+    branches: ["claude/claude-md-docs-8r1kk7"]
+    paths: ["youtube-subtitle-converter/**", ".github/workflows/subtitle-converter-e2e.yml"]
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: youtube-subtitle-converter }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+
+      - name: 의존성 설치
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q espeak-ng
+          pip install -q -r requirements.txt
+
+      - name: "[1] 단위 테스트 (URL 파싱·포맷터·파일명)"
+        run: |
+          python - << 'EOF'
+          from backend.youtube_parser import parse_video_id
+          from backend.formatter import format_subtitles, safe_filename
+          from backend.transcriber import Segment
+          assert parse_video_id("https://youtu.be/dQw4w9WgXcQ") == "dQw4w9WgXcQ"
+          assert parse_video_id("https://www.youtube.com/watch?v=dQw4w9WgXcQ") == "dQw4w9WgXcQ"
+          assert parse_video_id("https://youtube.com/shorts/abc123XYZ_-") == "abc123XYZ_-"
+          assert parse_video_id("https://naver.com/x") is None
+          segs = [Segment(0.0, " 안녕하세요 "), Segment(83.4, "본론"), Segment(3725.0, "한 시간")]
+          assert format_subtitles(segs, True) == "[00:00] 안녕하세요\n[01:23] 본론\n[1:02:05] 한 시간"
+          assert format_subtitles(segs, False) == "안녕하세요\n본론\n한 시간"
+          assert safe_filename("   ") == "subtitles"
+          print("PASS: unit tests")
+          EOF
+
+      - name: "[2] 한국어 음성인식 엔진 검증 (합성 음성 → Whisper → 텍스트)"
+        run: |
+          espeak-ng -v ko -s 130 "안녕하세요. 자막 변환기 테스트입니다." -w ko_test.wav
+          python - << 'EOF'
+          from backend.transcriber import transcribe_audio
+          from backend.formatter import format_subtitles
+          segs = transcribe_audio("ko_test.wav", model_size="small", language="ko")
+          out = format_subtitles(segs, include_timestamp=True)
+          print("인식 결과:", out)
+          assert segs, "세그먼트가 비어 있음"
+          assert any(k in out for k in ("안녕", "자막", "테스트")), f"한국어 인식 실패: {out}"
+          print("PASS: Korean speech-to-text engine")
+          EOF
+
+      - name: "[3] 진짜 유튜브 E2E (19초 영상 → 자막 TXT)"
+        id: yt
+        run: |
+          python cli.py "https://www.youtube.com/watch?v=jNQXAC9IVRw" -t --model tiny -o e2e_result.txt
+          echo "----- e2e_result.txt -----"
+          cat e2e_result.txt
+          test -s e2e_result.txt && echo "PASS: real YouTube end-to-end"
+
+      - name: "[4] 웹앱 기동 + API 스모크"
+        run: |
+          python app.py & sleep 4
+          curl -sf http://127.0.0.1:5123/ | grep -q "자막 변환기"
+          curl -sf http://127.0.0.1:5123/css/style.css > /dev/null
+          curl -s -X POST http://127.0.0.1:5123/api/convert -H 'Content-Type: application/json' \
+            -d '{"url":"https://naver.com/x"}' | grep -q "error"
+          echo "PASS: web app smoke"
+
+      - name: 결과물 업로드
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: youtube-subtitle-converter/e2e_result.txt
+          if-no-files-found: ignore
