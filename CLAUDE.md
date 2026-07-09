@@ -178,6 +178,12 @@ The repository owner has set these standing rules for every session in this repo
    anything outside the working folder.
 5. **Keep answers short and lead with the outcome.** Minimize back-and-forth;
    don't ask a follow-up question when a reasonable default exists.
+6. **Test by actually executing — never hand off verification.** "Written but
+   needs testing on your machine" is unfinished work in disguise. Exhaust every
+   way to run the real thing here first (install the runtime in the sandbox,
+   hit the real network, simulate a fresh machine). Session evidence: pushing
+   for real execution caught 3 shipped-code bugs that "test it on site" would
+   have dumped on the user.
 
 ## Git workflow (for this task/session)
 
