@@ -2,7 +2,21 @@
 
 A(회사) / B(자택) / C(학교), OS(Windows/macOS/Linux) 무관하게 **동일한 Fable 5급 AI 행동**을 재현하는 이식형 패키지.
 
-## 빠른 시작 (2분)
+## ⚡ 원샷 설치 (이 한 줄이면 끝 — 최신 버전 자동 다운로드 + 설치 + 파일 열기)
+
+**Windows** — PowerShell 열고 붙여넣기:
+```powershell
+irm https://raw.githubusercontent.com/rainbowww/skills/main/portable-ai-setup/install.ps1 | iex
+```
+
+**macOS / Linux** — 터미널 열고 붙여넣기:
+```bash
+curl -sSL https://raw.githubusercontent.com/rainbowww/skills/main/portable-ai-setup/install.sh | bash
+```
+
+실행하면 `~/portable-ai-setup_Ver{N}` 폴더에 설치되고, 붙여넣을 시스템 프롬프트 파일이 자동으로 열립니다(윈도우). 파일에서 **B절 코드블록 복사 → AI 도구에 붙여넣기** — 그게 전부입니다.
+
+## 빠른 시작 (수동 설치 시, 2분)
 
 | 장소 | 가이드 |
 |---|---|
@@ -33,6 +47,7 @@ A(회사) / B(자택) / C(학교), OS(Windows/macOS/Linux) 무관하게 **동일
 |---|---|---|
 | Ver1 | 2026-07-09 | 최초 패키지 (export.ps1에 윈도우 전용 경로 버그 있음 — 폐기) |
 | Ver2 | 2026-07-09 | export.ps1 크로스플랫폼 수정(Join-Path), PowerShell 7.6.3 실테스트 통과, 버전 체계 도입 |
+| Ver3 | 2026-07-09 | 원샷 설치기 추가 (install.ps1 / install.sh — 한 줄 실행으로 최신 버전 자동 다운로드·설치) |
 
 ## 갱신 규칙
 
