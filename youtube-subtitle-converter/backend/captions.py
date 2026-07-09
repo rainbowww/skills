@@ -23,12 +23,33 @@ def _to_seconds(m: "re.Match") -> float:
     return h * 3600 + mm * 60 + ss + ms / 1000.0
 
 
+def _dedupe_rolling(cues: list[Segment]) -> list[Segment]:
+    """유튜브 자동자막의 '굴러가는(rolling)' 겹침 제거.
+    각 자막 줄이 앞줄의 끝을 반복하므로, 앞 줄과 겹치는 단어를 빼고
+    '새로 늘어난 부분'만 남긴다. (겹침이 없는 정식 자막은 그대로 통과.)
+    """
+    out: list[Segment] = []
+    prev: list[str] = []
+    for c in cues:
+        words = c.text.split()
+        # prev의 접미사와 words의 접두사가 겹치는 최대 길이 k
+        k = 0
+        for i in range(min(len(prev), len(words)), 0, -1):
+            if prev[-i:] == words[:i]:
+                k = i
+                break
+        new_words = words[k:]
+        prev = words
+        if new_words:  # 완전히 겹치면(새 단어 없음) 건너뜀
+            out.append(Segment(start=c.start, text=" ".join(new_words)))
+    return out
+
+
 def parse_vtt(text: str) -> list[Segment]:
     """WEBVTT 텍스트를 (시작초, 텍스트) 세그먼트 리스트로 파싱한다.
-    태그(<c>, <00:00:01.500> 등) 제거, 자동자막의 연속 중복 줄 제거.
+    태그(<c>, <00:00:01.500> 등) 제거 후, 자동자막의 롤링 겹침을 제거한다.
     """
-    segments: list[Segment] = []
-    last_text = None
+    cues: list[Segment] = []
     for block in re.split(r"\n[ \t]*\n", text.replace("\r\n", "\n").replace("\r", "\n")):
         lines = [ln for ln in block.split("\n") if ln.strip()]
         timing_idx = next((i for i, ln in enumerate(lines) if "-->" in ln), None)
@@ -41,11 +62,9 @@ def parse_vtt(text: str) -> list[Segment]:
         raw = " ".join(lines[timing_idx + 1:])
         txt = _TAG.sub("", raw)
         txt = re.sub(r"\s+", " ", txt).strip()
-        if not txt or txt == last_text:  # 빈 줄·직전과 동일한 줄(롤링 중복) 건너뜀
-            continue
-        last_text = txt
-        segments.append(Segment(start=start, text=txt))
-    return segments
+        if txt:
+            cues.append(Segment(start=start, text=txt))
+    return _dedupe_rolling(cues)
 
 
 def _pick_vtt_url(caption_map: dict) -> str | None:
