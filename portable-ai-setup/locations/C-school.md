@@ -8,6 +8,10 @@
 ```powershell
 # 공용 PC라면 clone 대신 USB의 zip 사용 권장
 Expand-Archive portable-ai-setup.zip -DestinationPath $env:TEMP\pai
+
+# ⚠️ 공용 PC는 .ps1 실행이 기본 차단(ExecutionPolicy Restricted)됨.
+# 관리자 권한 없이 이번 세션만 우회하려면:
+powershell -ExecutionPolicy Bypass -File .\export.ps1
 ```
 
 **macOS / Linux (bash):**
