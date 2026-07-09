@@ -23,7 +23,8 @@ $files = @(
 $base = $null
 foreach ($b in $branches) {
   try {
-    $v = (Invoke-RestMethod "https://raw.githubusercontent.com/$repo/$b/portable-ai-setup/VERSION").Trim()
+    # [string] 캐스팅 필수: 숫자만 있는 VERSION을 irm이 Int64로 파싱해 .Trim()이 없어 죽는 버그 방지
+    $v = ([string](Invoke-RestMethod "https://raw.githubusercontent.com/$repo/$b/portable-ai-setup/VERSION")).Trim()
     $base = "https://raw.githubusercontent.com/$repo/$b/portable-ai-setup"
     break
   } catch { continue }

@@ -48,6 +48,7 @@ curl -sSL https://raw.githubusercontent.com/rainbowww/skills/main/portable-ai-se
 | Ver1 | 2026-07-09 | 최초 패키지 (export.ps1에 윈도우 전용 경로 버그 있음 — 폐기) |
 | Ver2 | 2026-07-09 | export.ps1 크로스플랫폼 수정(Join-Path), PowerShell 7.6.3 실테스트 통과, 버전 체계 도입 |
 | Ver3 | 2026-07-09 | 원샷 설치기 추가 (install.ps1 / install.sh — 한 줄 실행으로 최신 버전 자동 다운로드·설치) |
+| Ver4 | 2026-07-09 | install.ps1 버그 수정: 숫자 VERSION을 Int64로 파싱해 .Trim()에서 죽던 문제([string] 캐스팅). bash·PowerShell 설치기 모두 GitHub 상대 실전 테스트 통과 |
 
 ## 갱신 규칙
 
