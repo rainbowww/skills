@@ -14,8 +14,25 @@ A(회사) / B(자택) / C(학교), OS(Windows/macOS/Linux) 무관하게 **동일
 
 ## 내보내기 (오프라인 이동)
 
-- Windows: `.\export.ps1` → `portable-ai-setup.zip`
-- macOS/Linux: `bash export.sh` → `portable-ai-setup.zip`
+- Windows: `.\export.ps1` → `portable-ai-setup_Ver{N}.zip`
+- macOS/Linux: `bash export.sh` → `portable-ai-setup_Ver{N}.zip`
+
+## 버전 규칙 (혼동 방지 — 반드시 준수)
+
+같은 이름의 zip이 두 개 돌아다니는 사고를 막기 위한 절대 규칙:
+
+1. **버전의 원천은 `VERSION` 파일 하나뿐.** 현재 버전은 그 파일의 숫자다.
+2. **zip 파일명에는 항상 버전이 붙는다** (`portable-ai-setup_Ver2.zip`). export 스크립트가 자동으로 붙이므로 손으로 이름 짓지 말 것.
+3. **패키지 내용을 수정하면 배포 전에 `VERSION` 숫자를 +1** 하고 아래 이력표에 한 줄 추가.
+4. 버전 없는 zip(`portable-ai-setup.zip`)을 받았다면 **구버전이므로 폐기**하고 최신 Ver본을 받을 것.
+5. 세 장소(A/B/C)에서 버전이 다르면, 숫자가 큰 쪽이 항상 최신이다.
+
+### 버전 이력
+
+| 버전 | 날짜 | 변경 내용 |
+|---|---|---|
+| Ver1 | 2026-07-09 | 최초 패키지 (export.ps1에 윈도우 전용 경로 버그 있음 — 폐기) |
+| Ver2 | 2026-07-09 | export.ps1 크로스플랫폼 수정(Join-Path), PowerShell 7.6.3 실테스트 통과, 버전 체계 도입 |
 
 ## 갱신 규칙
 
