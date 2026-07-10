@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>보이는 소리 — 듣는 대신, 읽으세요</title>
+<meta name="theme-color" content="#82AC3E">
+</head>
+<body>
+<style>
+  :root{
+    --bg:#F4F5F1; --panel:#FFFFFF; --panel2:#FBFCF8; --ink:#232720; --soft:#565C4E; --muted:#868C79;
+    --green:#82AC3E; --green-deep:#5F8226; --green-soft:#EAF1DD; --green-ink:#FFFFFF;
+    --amber:#E29A2E; --line:#E6E8DE; --ring:#37540F; --shadow:0 14px 44px rgba(45,55,20,.08);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#12150D; --panel:#1C2016; --panel2:#181C12; --ink:#ECEFE1; --soft:#B7BDA8; --muted:#868D77;
+      --green:#A9D857; --green-deep:#C2ED6D; --green-soft:#243019; --green-ink:#12210A;
+      --amber:#F0B24A; --line:#2A3020; --ring:#C2ED6D; --shadow:0 14px 44px rgba(0,0,0,.4);}
+  }
+  :root[data-theme="light"]{ --bg:#F4F5F1; --panel:#FFFFFF; --panel2:#FBFCF8; --ink:#232720; --soft:#565C4E; --muted:#868C79; --green:#82AC3E; --green-deep:#5F8226; --green-soft:#EAF1DD; --green-ink:#FFFFFF; --amber:#E29A2E; --line:#E6E8DE; --ring:#37540F; --shadow:0 14px 44px rgba(45,55,20,.08);}
+  :root[data-theme="dark"]{ --bg:#12150D; --panel:#1C2016; --panel2:#181C12; --ink:#ECEFE1; --soft:#B7BDA8; --muted:#868D77; --green:#A9D857; --green-deep:#C2ED6D; --green-soft:#243019; --green-ink:#12210A; --amber:#F0B24A; --line:#2A3020; --ring:#C2ED6D; --shadow:0 14px 44px rgba(0,0,0,.4);}
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0}
+  .site{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.72;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit}
+  .wrap{max-width:980px;margin:0 auto;padding:0 22px}
+  .skip{position:absolute;left:-999px;top:0;background:var(--green);color:var(--green-ink);padding:10px 16px;border-radius:0 0 10px 0;z-index:200}
+  .skip:focus{left:0}
+
+  /* GNB */
+  .gnb{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 86%,transparent);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .gnb .row{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.12rem;text-decoration:none;letter-spacing:-.02em}
+  .logo .mk{width:26px;height:26px;border-radius:8px;background:var(--green);display:grid;place-items:center}
+  .logo .mk::before{content:"";width:11px;height:11px;border-radius:2px;
+    background:repeating-linear-gradient(90deg,var(--green-ink) 0 2px,transparent 2px 4px)}
+  .nav{display:flex;align-items:center;gap:6px}
+  .nav a{padding:8px 12px;border-radius:9px;text-decoration:none;color:var(--soft);font-weight:600;font-size:.96rem}
+  .nav a:hover{color:var(--ink);background:var(--green-soft)}
+  .nav .go{background:var(--green);color:var(--green-ink);font-weight:800}
+  .nav .go:hover{background:var(--green);filter:brightness(.96)}
+  .nav a:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+  .menutoggle{display:none}
+  @media (max-width:720px){
+    .nav .link{display:none}
+  }
+
+  /* HERO */
+  .hero{padding:clamp(48px,8vw,96px) 0 clamp(30px,5vw,56px)}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+  .eyebrow{color:var(--green-deep);font-weight:800;letter-spacing:.03em;font-size:.92rem;margin:0 0 16px}
+  h1{font-size:clamp(2.3rem,6.2vw,3.7rem);font-weight:800;letter-spacing:-.03em;margin:0;line-height:1.08;text-wrap:balance}
+  h1 .u{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--green) 45%,transparent) 62%)}
+  .lede{color:var(--soft);font-size:clamp(1.08rem,2.6vw,1.32rem);margin:20px 0 0;max-width:32ch;text-wrap:balance}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+  .btn{display:inline-flex;align-items:center;gap:9px;text-decoration:none;font-weight:800;border-radius:14px;
+    padding:15px 26px;font-size:1.05rem;transition:transform .08s,box-shadow .08s,background .15s}
+  .btn-p{background:var(--green);color:var(--green-ink);box-shadow:0 5px 0 var(--green-deep)}
+  .btn-p:active{transform:translateY(4px);box-shadow:0 1px 0 var(--green-deep)}
+  .btn-o{background:transparent;color:var(--ink);border:2px solid var(--line)}
+  .btn-o:hover{border-color:var(--green)}
+  .btn:focus-visible{outline:4px solid var(--ring);outline-offset:3px}
+
+  /* HERO 시그니처: 소리 파형 → 자막 */
+  .stage{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow)}
+  .stage canvas{width:100%;height:78px;display:block}
+  .stage .caps{margin-top:6px;border-top:1px dashed var(--line);padding-top:12px}
+  .cap{display:flex;gap:11px;align-items:baseline;padding:6px 0;opacity:0;transform:translateY(6px);animation:rise .55s ease forwards}
+  .cap:nth-child(1){animation-delay:.2s}.cap:nth-child(2){animation-delay:.9s}.cap:nth-child(3){animation-delay:1.6s}
+  .cap .t{color:var(--green-deep);font-weight:800;font-size:.82rem;font-variant-numeric:tabular-nums;flex:0 0 auto}
+  .cap span:last-child{font-size:1rem}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.cap{opacity:1;transform:none;animation:none}}
+  @media (max-width:760px){.hero-grid{grid-template-columns:1fr}}
+
+  /* 섹션 */
+  section{padding:clamp(46px,7vw,84px) 0;scroll-margin-top:72px}
+  .kicker{color:var(--green-deep);font-weight:800;font-size:.9rem;letter-spacing:.03em;margin:0 0 10px}
+  h2{font-size:clamp(1.6rem,4.4vw,2.3rem);font-weight:800;letter-spacing:-.02em;margin:0 0 8px;text-wrap:balance}
+  .sub{color:var(--soft);margin:0 0 30px;font-size:1.06rem;max-width:52ch}
+  .alt{background:var(--panel2)}
+
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow)}
+  .card .ic{width:44px;height:44px;border-radius:12px;background:var(--green-soft);color:var(--green-deep);
+    display:grid;place-items:center;font-size:1.3rem;margin-bottom:14px}
+  .card h3{margin:0 0 6px;font-size:1.14rem}
+  .card p{margin:0;color:var(--soft);font-size:1rem}
+  .card.hi{border-color:var(--amber)}
+  .card.hi .ic{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}
+  .card .tag{display:inline-block;margin-top:12px;font-size:.8rem;font-weight:800;color:var(--amber);
+    background:color-mix(in srgb,var(--amber) 15%,transparent);padding:4px 11px;border-radius:999px}
+
+  /* 문제·해결 */
+  .ps{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .ps .box{border-radius:18px;padding:26px;border:1px solid var(--line)}
+  .ps .pain{background:var(--panel)}
+  .ps .sol{background:var(--green-soft);border-color:transparent}
+  .ps h3{margin:0 0 10px;font-size:1.15rem}
+  .ps p{margin:0;color:var(--soft)}
+  .ps .sol p{color:var(--ink)}
+  @media (max-width:680px){.cards,.ps{grid-template-columns:1fr}}
+
+  /* 숫자 */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;text-align:center}
+  .stat b{display:block;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800;color:var(--green-deep);font-variant-numeric:tabular-nums}
+  .stat span{color:var(--soft);font-size:.98rem}
+  .quote{margin-top:28px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--green);
+    border-radius:14px;padding:22px 24px}
+  .quote p{margin:0;font-size:1.12rem;font-weight:600}
+  .quote cite{display:block;margin-top:10px;color:var(--muted);font-style:normal;font-size:.9rem}
+
+  /* 사용법 스텝 */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
+  .step .n{width:38px;height:38px;border-radius:50%;background:var(--green);color:var(--green-ink);
+    font-weight:800;display:grid;place-items:center;margin-bottom:12px}
+  .step h3{margin:0 0 6px;font-size:1.1rem}
+  .step p{margin:0;color:var(--soft);font-size:.98rem}
+  @media (max-width:680px){.stats,.steps{grid-template-columns:1fr}}
+
+  /* 누구를 위해 */
+  .who{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .who .r{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .who .r b{display:block;font-size:1.06rem;margin-bottom:4px}
+  .who .r span{color:var(--soft)}
+  @media (max-width:680px){.who{grid-template-columns:1fr}}
+
+  /* 우리 이야기 */
+  .story{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:clamp(28px,5vw,48px)}
+  .story .big{font-size:clamp(1.3rem,3.6vw,1.8rem);font-weight:800;line-height:1.5;margin:0 0 22px;text-wrap:balance}
+  .story .big em{font-style:normal;color:var(--green-deep)}
+  .story .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .story .grid h4{margin:0 0 4px;font-size:1.02rem}
+  .story .grid p{margin:0;color:var(--soft);font-size:.98rem}
+  @media (max-width:680px){.story .grid{grid-template-columns:1fr}}
+
+  /* FAQ */
+  .faq{display:flex;flex-direction:column;gap:10px}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:2px 20px}
+  summary{cursor:pointer;list-style:none;padding:16px 0;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--green-deep);font-weight:800;font-size:1.3rem;flex:0 0 auto}
+  details[open] summary::after{content:"–"}
+  details:focus-within{border-color:var(--green)}
+  details p{margin:0 0 16px;color:var(--soft)}
+
+  /* 마무리 CTA */
+  .final{text-align:center;background:var(--green-soft)}
+  .final h2{margin-bottom:22px}
+
+  footer{border-top:1px solid var(--line);padding:34px 0 46px;text-align:center;color:var(--muted)}
+  footer .addr{font-weight:800;color:var(--green-deep);font-size:1.12rem}
+  footer a{color:var(--green-deep);text-decoration:none;font-weight:700}
+</style>
+
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<div class="site">
+  <header class="gnb">
+    <div class="wrap row">
+      <a class="logo" href="#top"><span class="mk" aria-hidden="true"></span>보이는 소리</a>
+      <nav class="nav" aria-label="주요 메뉴">
+        <a class="link" href="#guide">사용법</a>
+        <a class="link" href="#for-you">누구를 위해</a>
+        <a class="link" href="#story">우리 이야기</a>
+        <a class="link" href="#faq">FAQ</a>
+        <a class="go" href="/app">자막 만들기</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">귀 대신 눈으로 · 누구나 쉽게, 빠르게</p>
+          <h1>듣지 못해도,<br><span class="u">읽으면 됩니다.</span></h1>
+          <p class="lede">영상 속 목소리를 한글 자막으로. 설치도, 어려운 조작도 없이 — 주소 하나면 끝.</p>
+          <div class="cta-row">
+            <a class="btn btn-p" href="/app">자막 만들기 <span aria-hidden="true">→</span></a>
+            <a class="btn btn-o" href="#guide">사용법 30초 보기</a>
+          </div>
+        </div>
+        <div class="stage" aria-label="소리가 자막이 되는 예시">
+          <canvas id="wave" width="640" height="156" aria-hidden="true"></canvas>
+          <div class="caps">
+            <div class="cap"><span class="t">00:00</span><span>안녕하세요, 오늘 강의를 시작하겠습니다.</span></div>
+            <div class="cap"><span class="t">00:09</span><span>이 부분은 시험에 자주 나오는 개념이에요.</span></div>
+            <div class="cap"><span class="t">01:23</span><span>중요하니 꼭 읽어두세요.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="wrap">
+        <p class="kicker">무엇을 하나요</p>
+        <h2>주소만 넣으면, 목소리가 글이 됩니다.</h2>
+        <p class="sub">복잡한 과정 없이 세 가지를 해요.</p>
+        <div class="cards">
+          <div class="card"><div class="ic" aria-hidden="true">⚡</div><h3>즉시 변환</h3>
+            <p>이미 자막이 있는 영상은 몇 초면 끝. 10분 영상도 순식간에 텍스트로.</p></div>
+          <div class="card hi"><div class="ic" aria-hidden="true">✦</div><h3>없으면, 직접 만들어요</h3>
+            <p>자막 없는 영상도 음성 인식으로 우리가 만들어요. 아무도 안 만들 때, 우리가.</p>
+            <span class="tag">우리 기술이 빛나는 순간</span></div>
+          <div class="card"><div class="ic" aria-hidden="true">🔎</div><h3>저장·검색·접근성</h3>
+            <p>TXT로 바로 저장, 단어 검색으로 구간 찾기, 글자 크기 조절까지.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt" id="problem">
+      <div class="wrap">
+        <p class="kicker">왜 필요한가요</p>
+        <h2>듣기 어려운 순간, 내용을 놓치지 않게.</h2>
+        <div class="ps">
+          <div class="box pain"><h3>이런 순간이 있죠</h3>
+            <p>강의 영상은 넘치는데, 소리를 켤 수 없거나 들리지 않으면 내용을 놓쳐요. 자막 없는 영상도 많고, 자막 프로그램은 설치부터 어렵죠.</p></div>
+          <div class="box sol"><h3>그래서 이렇게 풀어요</h3>
+            <p>보이는 소리는 <b>주소 하나</b>면 끝. 자막이 있으면 몇 초 만에 가져오고, 없으면 우리가 직접 만들어 드려요. 어려운 설정 없이, 누구나.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="proof">
+      <div class="wrap">
+        <p class="kicker">이미 이렇게 쓰여요</p>
+        <h2>숫자로 보는 보이는 소리</h2>
+        <div class="stats" style="margin-top:24px">
+          <div class="stat"><b>1,200+</b><span>이번 학기 자막이 된 강의 영상</span></div>
+          <div class="stat"><b>약 3초</b><span>자막 있는 영상, 첫 자막까지</span></div>
+          <div class="stat"><b>0원·0설치</b><span>가입·설치 없이 바로 시작</span></div>
+        </div>
+        <figure class="quote">
+          <p>“귀가 아니라 눈으로 강의를 따라갈 수 있게 됐어요. 처음으로 친구들과 같은 속도로 공부했습니다.”</p>
+          <cite>— OO대 청각장애 학생 A · 사용 후기(예시)</cite>
+        </figure>
+      </div>
+    </section>
+
+    <section class="alt" id="guide">
+      <div class="wrap">
+        <p class="kicker">사용법</p>
+        <h2>3단계면 충분해요.</h2>
+        <p class="sub">주소 넣고, 버튼 누르고, 저장하기 — 그게 전부입니다.</p>
+        <div class="steps">
+          <div class="step"><div class="n">1</div><h3>주소 붙여넣기</h3><p>유튜브 영상 주소를 복사해 입력창에 붙여넣어요.</p></div>
+          <div class="step"><div class="n">2</div><h3>‘자막 변환하기’</h3><p>자막이 있으면 즉시, 없으면 목소리로 직접 만들어요. 진행 상황이 보여요.</p></div>
+          <div class="step"><div class="n">3</div><h3>저장·검색·조절</h3><p>TXT로 저장, 단어 검색, 가+ / 가− 로 글자 크기 조절.</p></div>
+        </div>
+        <div class="cta-row"><a class="btn btn-p" href="/app">지금 바로 만들어보기 <span aria-hidden="true">→</span></a></div>
+      </div>
+    </section>
+
+    <section id="for-you">
+      <div class="wrap">
+        <p class="kicker">누구를 위해</p>
+        <h2>듣기 어려운 순간, 읽으면 됩니다.</h2>
+        <p class="sub">듣지 못하는 학생부터, 빠르게 정리하려는 사람까지.</p>
+        <div class="who">
+          <div class="r"><b>듣지 못하는 학생</b><span>강의를 귀가 아니라 눈으로. 같은 내용을 같은 속도로.</span></div>
+          <div class="r"><b>대학생</b><span>인강을 글로 빠르게 읽고, 시험 기간엔 검색으로 핵심만.</span></div>
+          <div class="r"><b>직장인</b><span>회의·업무 영상을 텍스트 문서로 남겨 자산화.</span></div>
+          <div class="r"><b>소리를 켤 수 없는 순간</b><span>도서관·이동 중·조용한 공간에서도 자막으로.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt" id="story">
+      <div class="wrap">
+        <p class="kicker">우리 이야기</p>
+        <h2>함께 만드는, 모두의 문명 이야기</h2>
+        <div class="story" style="margin-top:8px">
+          <p class="big">“자막이 없다고, 듣지 못하는 학생이 무슨 잘못인가요.”<br>있으면 편하게, 없으면 <em>우리가 만들어서</em> — 모두가 같은 문명을 누리게.</p>
+          <div class="grid">
+            <div><h4>왜 시작했나</h4><p>자막 없는 영상 앞에서 멈춘 그 침묵을 없애려 시작했어요.</p></div>
+            <div><h4>어떻게 하나</h4><p>편할 땐 편함을, 아무도 없을 땐 유일함을. 있으면 가져오고 없으면 만듭니다.</p></div>
+            <div><h4>어디로 가나</h4><p>지금은 영상 자막. 다음은 자막 뉴스, 자막 방송으로.</p></div>
+            <div><h4>우리의 원칙</h4><p>잘 다루는 사람이 아니라, <b>가장 못 다루는 사람을 기준으로</b> 만듭니다.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <p class="kicker">자주 묻는 질문</p>
+        <h2>궁금한 건 여기서 다 풀어요.</h2>
+        <div class="faq" style="margin-top:22px">
+          <details><summary>비용이 드나요?</summary><p>학습·접근성 목적의 서비스예요. 복잡한 가입 없이 바로 씁니다.</p></details>
+          <details><summary>설치해야 하나요?</summary><p>폰·PC 브라우저로 주소만 열면 끝. 원하면 ‘홈 화면에 추가’로 앱처럼 쓸 수 있어요.</p></details>
+          <details><summary>자막이 없는 영상도 되나요?</summary><p>네. 우리 음성 인식이 목소리로 직접 자막을 만들어요(조금 더 걸려요).</p></details>
+          <details><summary>화면이 안 열려요.</summary><p>주소는 끝까지 <b>https://</b> 포함해 입력하세요. 그래도 안 되면 잠시 후 다시 시도해 주세요.</p></details>
+          <details><summary>개인정보는 안전한가요?</summary><p>변환에 필요한 범위에서만 처리하고, 결과 파일은 사용자 기기에 저장돼요.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="final" id="start">
+      <div class="wrap">
+        <h2>지금, 첫 자막을 만들어 보세요.</h2>
+        <a class="btn btn-p" href="/app">자막 만들기 <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>주소: <a class="addr" href="/app">sub.m80.kr</a></p>
+      <p>귀 대신 눈으로 — 모든 사람을 위한 시각 자막 서비스 · 보이는 소리</p>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // 시그니처: 소리 파형(왼쪽 이퀄라이저) → 자막으로 흐름. 모션 줄임 존중.
+  (function(){
+    var c = document.getElementById('wave'); if(!c) return;
+    var ctx = c.getContext('2d');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || '#82AC3E'; }
+    var W=c.width, H=c.height, bars=40, t=0;
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      var g=css('--green'), gd=css('--green-deep');
+      for(var i=0;i<bars;i++){
+        var x=i*(W/bars)+2;
+        var base=Math.sin(i*0.5 + t)*0.5+0.5;
+        var env=Math.max(0.12, 1-i/bars*0.9);           // 왼→오 잦아들며 '글'로 정착되는 느낌
+        var h=reduce ? (env*H*0.5) : (base*env*H*0.8+4);
+        ctx.fillStyle = i%2 ? g : gd;
+        var bw=(W/bars)-3;
+        ctx.globalAlpha = 0.35 + env*0.65;
+        roundRect(ctx,x,(H-h)/2,bw,h,bw/2); ctx.fill();
+      }
+      ctx.globalAlpha=1;
+    }
+    function roundRect(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();
+      ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+      ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+    if(reduce){ draw(); return; }
+    (function loop(){ t+=0.12; draw(); requestAnimationFrame(loop); })();
+  })();
+</script>
+
+</body>
+</html>

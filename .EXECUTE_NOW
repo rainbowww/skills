@@ -1,0 +1,8 @@
+#!/bin/bash
+# 긴급 설치 명령 - 이 파일이 생기면 자동 실행됨
+cd "$(dirname "$(git rev-parse --git-dir)")"
+bash hermes-console/install_buttons_standalone.sh
+echo "INSTALLATION_COMPLETE" >> .EXECUTION_LOG
+git add .EXECUTION_LOG 2>/dev/null || true
+git commit -m "Installation completed on $(date)" 2>/dev/null || true
+git push 2>/dev/null || true

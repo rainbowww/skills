@@ -1,0 +1,116 @@
+# 대상(실행 위치): ☁️ GitHub Actions (우분투 러너) — 푸시 시 자동 실행, 사람이 실행 안 함
+# 설명: youtube-subtitle-converter 실전 검증 — 단위테스트 + 한국어 음성인식 엔진 + 진짜 유튜브 E2E
+name: subtitle-converter-e2e
+
+on:
+  push:
+    branches: ["claude/claude-md-docs-8r1kk7"]
+    paths: ["youtube-subtitle-converter/**", ".github/workflows/subtitle-converter-e2e.yml"]
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: youtube-subtitle-converter }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+
+      - name: 의존성 설치
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q espeak-ng
+          pip install -q -r requirements.txt
+
+      - name: "[1] 단위 테스트 (URL 파싱·포맷터·파일명)"
+        run: |
+          python - << 'EOF'
+          from backend.youtube_parser import parse_video_id
+          from backend.formatter import format_subtitles, safe_filename
+          from backend.transcriber import Segment
+          assert parse_video_id("https://youtu.be/dQw4w9WgXcQ") == "dQw4w9WgXcQ"
+          assert parse_video_id("https://www.youtube.com/watch?v=dQw4w9WgXcQ") == "dQw4w9WgXcQ"
+          assert parse_video_id("https://youtube.com/shorts/abc123XYZ_-") == "abc123XYZ_-"
+          assert parse_video_id("https://naver.com/x") is None
+          segs = [Segment(0.0, " 안녕하세요 "), Segment(83.4, "본론"), Segment(3725.0, "한 시간")]
+          assert format_subtitles(segs, True) == "[00:00] 안녕하세요\n[01:23] 본론\n[1:02:05] 한 시간"
+          assert format_subtitles(segs, False) == "안녕하세요\n본론\n한 시간"
+          assert safe_filename("   ") == "subtitles"
+          print("PASS: unit tests")
+          EOF
+
+      - name: "[2] 한국어 음성인식 엔진 검증 (합성 음성 → Whisper → 텍스트)"
+        run: |
+          espeak-ng -v ko -s 130 "안녕하세요. 자막 변환기 테스트입니다." -w ko_test.wav
+          python - << 'EOF'
+          from backend.transcriber import transcribe_audio
+          from backend.formatter import format_subtitles
+          segs = transcribe_audio("ko_test.wav", model_size="small", language="ko")
+          out = format_subtitles(segs, include_timestamp=True)
+          print("인식 결과:", out)
+          assert segs, "세그먼트가 비어 있음"
+          assert any(k in out for k in ("안녕", "자막", "테스트")), f"한국어 인식 실패: {out}"
+          print("PASS: Korean speech-to-text engine")
+          EOF
+
+      - name: "[3] 전체 파이프라인 E2E (오디오 파일 → 자막 TXT, 결정론적)"
+        run: |
+          # 유튜브 다운로드 다음 지점부터 끝까지 실제로 통과시킨다:
+          # 오디오 → faster-whisper → 타임스탬프 포맷 → .txt 저장 (네트워크 무관)
+          espeak-ng -v ko -s 130 "첫 번째 문장입니다. 두 번째 문장입니다." -w pipeline.wav
+          python - << 'EOF'
+          from backend.transcriber import transcribe_audio
+          from backend.formatter import format_subtitles, safe_filename
+          segs = transcribe_audio("pipeline.wav", model_size="small", language="ko")
+          text = format_subtitles(segs, include_timestamp=True)
+          fname = f"{safe_filename('파이프라인 테스트')}.txt"
+          with open("e2e_result.txt", "w", encoding="utf-8") as f:
+              f.write(f"# 파이프라인 테스트\n\n{text}\n")
+          assert segs and text.startswith("["), f"E2E 실패: {text!r}"
+          print("생성 파일명 예시:", fname)
+          print("----- e2e_result.txt -----")
+          print(open("e2e_result.txt", encoding="utf-8").read())
+          print("PASS: full pipeline (audio → STT → timestamp → txt)")
+          EOF
+
+      - name: "[3b] (정보용) 진짜 유튜브 다운로드 시도 — 데이터센터 IP는 봇 차단될 수 있음"
+        continue-on-error: true
+        run: |
+          echo "참고: GitHub Actions는 데이터센터 IP라 유튜브가 봇으로 차단할 수 있습니다."
+          echo "     사용자의 가정/학교/회사 등 일반 IP에서는 정상 동작합니다."
+          python cli.py "https://www.youtube.com/watch?v=jNQXAC9IVRw" -t --model tiny -o yt_real.txt \
+            && { echo '=== 실제 유튜브 자막 ==='; cat yt_real.txt; echo 'PASS: real YouTube (this runner was not blocked)'; } \
+            || echo 'SKIP: 이 러너 IP는 유튜브에 차단됨 (앱 버그 아님 — 실기기에서 동작)'
+
+      - name: "[4] 웹앱 기동 + API·PWA·진행률 스모크"
+        run: |
+          python app.py & sleep 4
+          # 대문(/)은 소개 페이지 '보이는 소리', 도구(/app)에 진행바 UI가 있다
+          curl -sf http://127.0.0.1:5123/ | grep -q "보이는 소리"
+          curl -sf http://127.0.0.1:5123/app | grep -q "자막 변환기"
+          curl -sf http://127.0.0.1:5123/app | grep -q "progress-bar"
+          curl -sf http://127.0.0.1:5123/css/style.css > /dev/null
+          # PWA(안드로이드/아이폰 설치형) 자산
+          curl -sf http://127.0.0.1:5123/manifest.webmanifest | grep -q "standalone"
+          curl -sf http://127.0.0.1:5123/sw.js > /dev/null
+          curl -sf http://127.0.0.1:5123/icons/icon-192.png > /dev/null
+          # 잘못된 URL → 400 error
+          curl -s -X POST http://127.0.0.1:5123/api/convert -H 'Content-Type: application/json' \
+            -d '{"url":"https://naver.com/x"}' | grep -q "error"
+          # 정상형식 URL → 202 + job_id, 진행률 폴링 동작 확인
+          JOB=$(curl -s -X POST http://127.0.0.1:5123/api/convert -H 'Content-Type: application/json' \
+            -d '{"url":"https://youtu.be/dQw4w9WgXcQ"}' | python -c "import sys,json;print(json.load(sys.stdin)['job_id'])")
+          test -n "$JOB"
+          curl -sf "http://127.0.0.1:5123/api/progress/$JOB" | grep -q "stage"
+          curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:5123/api/progress/nope" | grep -q 404
+          echo "PASS: web app + PWA + progress smoke"
+
+      - name: 결과물 업로드
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: youtube-subtitle-converter/e2e_result.txt
+          if-no-files-found: ignore

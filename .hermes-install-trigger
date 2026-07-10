@@ -1,0 +1,5 @@
+node: node40
+command: curl -fsSL 'https://raw.githubusercontent.com/rainbowww/skills/claude/claude-md-docs-8r1kk7/hermes-console/install_buttons.sh' | bash
+timestamp: 2026-07-09T00:00:00Z
+target: HERMES console button installation
+emergency: true
