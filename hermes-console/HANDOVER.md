@@ -57,16 +57,21 @@ HERMES 콘솔 웹 UI에 클라이언트 측 버튼 2개를 추가한다. 서버 
 
 ## 5. 앞으로의 계획 — 다음 담당이 실행할 "한 번 붙여넣기"
 
-node40 셸(또는 HERMES 콘솔의 명령 실행창)에 **아래 블록을 통째로 한 번** 붙여넣는다.
-파일이 없어도 동작한다(이번 실패의 재발 방지). `PYEOF`까지 포함해 붙여넣을 것.
+**진짜 한 번 붙여넣기 파일: `hermes-console/PASTE_ME_node40.sh`**
+이 파일 하나를 열어 **전체를 통째로 복사 → node40 셸(또는 HERMES 콘솔 명령창)에
+한 번 붙여넣기**. 안에 파이썬 설치기 전체가 이미 박혀 있어(`python3 - <<'PYEOF' … PYEOF`)
+"파일 열어서 내용 복사" 같은 중간 단계가 없다. 파일이 node40에 없어도 동작한다.
 
 ```bash
-# 🟩 node40 (Linux bash) — 아래 전체를 한 번에 붙여넣기
+# 🟩 node40 (Linux bash) — PASTE_ME_node40.sh 의 "전체"를 한 번에 붙여넣기
+# (아래는 형태 예시. 실제로는 그 파일 전체를 그대로 붙여넣는다)
 python3 - <<'PYEOF'
-# hermes-console/install_buttons_oneshot.py 의 전체 내용을 여기에 붙여넣는다.
-# (저장소 파일을 열어 그대로 복사. 길이 때문에 본 문서엔 경로만 표기.)
+# ...install_buttons_oneshot.py 전체가 이 안에 이미 포함되어 있음...
 PYEOF
 ```
+
+- 저장소 pull이 가능한 경우엔 그냥: `bash hermes-console/PASTE_ME_node40.sh`
+  (단 경로 의존을 피하려면 원칙은 위의 "파일 전체 붙여넣기".)
 
 - 저장소에서 pull이 가능하면 더 간단:
   ```bash
